@@ -6,6 +6,10 @@
 
 [https://darosh.github.io/progression/](https://darosh.github.io/progression/)
 
+## To do
+
+- [ ] MIDI
+
 ## Project setup
 ```
 pnpm install
