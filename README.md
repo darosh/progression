@@ -4,7 +4,7 @@
 
 ## Demo
 
-[http://darosh.github.io/progression/](http://darosh.github.io/progression/)
+[https://darosh.github.io/progression/](https://darosh.github.io/progression/)
 
 ## Project setup
 ```
