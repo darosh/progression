@@ -1,8 +1,10 @@
-# progression
+# Progression
 
-> Interactive chord progression map
+> Interactive chord progression map based on [mugglinworks.com](http://mugglinworks.com/chordmaps/)
 
-Based on chord maps by [mugglinworks.com](http://mugglinworks.com/chordmaps/)
+## Demo
+
+[http://darosh.github.io/progression/](http://darosh.github.io/progression/)
 
 ## Project setup
 ```
