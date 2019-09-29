@@ -22,7 +22,6 @@ export const SampleLibrary = {
     }
 
     this.ext = newExt
-    return console.log('sample extensions set to ' + this.ext)
   },
 
   load: function (arg, Tone) {
