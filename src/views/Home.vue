@@ -67,7 +67,9 @@
             v-model="midi"
             class="ml-3"
             rounded>
-            <v-btn text disabled>
+            <v-btn
+              text
+              disabled>
               MIDI
             </v-btn>
           </v-btn-toggle>

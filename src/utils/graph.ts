@@ -246,6 +246,6 @@ function redirect (from: any, to: any, array: any[]) {
 
 export function activate (node: GraphNode, value: boolean) {
   node.active = value;
-  (node.parents || []).forEach(n => (n.active = value));
-  (<any>node).sourceLinks.forEach(n => (n.active = value))
+  (node.parents || []).forEach(n => { n.active = value });
+  (<any>node).sourceLinks.forEach((n: any) => { n.active = value })
 }

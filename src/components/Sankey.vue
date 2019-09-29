@@ -14,7 +14,7 @@
         refX="-0.4">
         <path
           d="M0,0 L1.6,0.8 0,1.6"
-          fill-opacity="0.333"/>
+          fill-opacity="0.333" />
       </marker>
       <marker
         id="start-marker"
@@ -27,7 +27,7 @@
           r="0.6"
           cx="1"
           cy="1"
-          fill-opacity="0.333"/>
+          fill-opacity="0.333" />
       </marker>
     </defs>
     <g v-if="!!path">
@@ -40,7 +40,7 @@
           marker-start="url(#start-marker)"
           marker-end="url(#head-marker)"
           :d="path(link)"
-          :style="{stroke: stroke(link.source.color)}"/>
+          :style="{stroke: stroke(link.source.color)}" />
       </g>
       <g>
         <g
@@ -57,7 +57,7 @@
             :style="{fill: node.color, stroke: stroke(node.color)}"
             @mouseenter="$emit('enter', node)"
             @mouseleave="$emit('leave', node)"
-            @click="$emit('clicked', node)"/>
+            @click="$emit('clicked', node)" />
           <text
             :y="(node.y1 - node.y0) / 2"
             dy=".35em"
@@ -72,7 +72,7 @@
                 fontSize: part.secondary ? '18px' : null,
               }"
               :baseline-shift="part.secondary ? '6' : (part.pre ? 1 : (part.post ? 6 : null))"
-              v-text="part.text"/>
+              v-text="part.text" />
           </text>
           <g
             v-for="(alt, index) in node.alts"
@@ -82,7 +82,7 @@
             <circle
               r="18"
               :style="{fill: altColor(node.color)}"
-              @click="$emit('clicked-alt', { node, alt })"/>
+              @click="$emit('clicked-alt', { node, alt })" />
             <text
               dy=".35em"
               text-anchor="middle">
@@ -244,7 +244,6 @@ export default {
 .dark .alt text {
   fill: #000;
 }
-
 
 @keyframes selection {
   from {
