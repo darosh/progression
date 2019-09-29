@@ -7,7 +7,8 @@
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint --fix",
     "test:unit": "vue-cli-service test:unit",
-    "install": "napa nbrosowsky/tonejs-instruments"
+    "install": "napa nbrosowsky/tonejs-instruments",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@tonaljs/chord": "^3.2.3",
@@ -23,6 +24,7 @@
     "vuetify": "^2.0.0"
   },
   "devDependencies": {
+    "gh-pages": "^2.1.1",
     "napa": "^3.0.0",
     "@types/jest": "^23.1.4",
     "@vue/cli-plugin-babel": "^3.11.0",
