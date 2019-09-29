@@ -1,5 +1,9 @@
 # progression
 
+> Interactive chord progression map
+
+Based on chord maps by [mugglinworks.com](http://mugglinworks.com/chordmaps/)
+
 ## Project setup
 ```
 pnpm install
