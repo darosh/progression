@@ -73,12 +73,26 @@
               MIDI
             </v-btn>
           </v-btn-toggle>
-          <keyboard
-            :notes="piano"
-            :start="36"
-            :length="61"
-            no-gutters
-            class="ml-3" />
+          <div style="position: relative;">
+            <keyboard
+              :style="{visibility: playStatus.loading ? 'hidden' : null}"
+              :notes="piano"
+              :start="36"
+              :length="61"
+              no-gutters
+              class="ml-3 d-block" />
+            <div
+              v-if="playStatus.loading"
+              style="position: absolute; top: 0px; left: 0; opacity: 0.87">
+              <v-progress-circular
+                indeterminate
+                :size="48-3"
+                :width="6"
+                color="rgb(0, 255, 68)"
+                class="ml-3 mr-2" />
+              <i>Loading sounds...</i>
+            </div>
+          </div>
         </v-row>
         <v-row
           no-gutters
@@ -126,7 +140,7 @@ import { romanNumeral } from '@tonaljs/roman-numeral'
 import { transpose, chord } from '@tonaljs/chord'
 import { coordToInterval, encode, note, transpose as transposeNote } from '@tonaljs/tonal'
 import { formatRoman, formatTransposed } from '@/utils/format'
-import { play } from '@/utils/play'
+import { play, playStatus } from '@/utils/play'
 
 export default {
   components: { Sankey, Keyboard },
@@ -139,7 +153,8 @@ export default {
     graph: null,
     notes: 'CDEFGAB'.split(''),
     note: 0,
-    piano: []
+    piano: [],
+    playStatus
   }),
   watch: {
     type: {

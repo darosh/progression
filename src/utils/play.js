@@ -2,8 +2,11 @@ import { SampleLibrary } from '../utils/samples'
 
 let current
 let initialized
+export const playStatus = { loading: false }
 
 async function initialize () {
+  playStatus.loading = true
+
   const Tone = await import('tone')
   window.Tone = Tone
 
@@ -13,6 +16,7 @@ async function initialize () {
   }, Tone)
 
   await Tone.ToneAudioBuffer.loaded()
+  playStatus.loading = false
 
   const vol = new Tone.Volume(-32)
 
