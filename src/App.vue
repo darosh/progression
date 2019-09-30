@@ -11,6 +11,11 @@ export default Vue.extend({
 </script>
 <style>
 html .v-application *, html .v-application .title, html .v-application svg * {
-  font-family: "M+PLUS Rounded 1c", sans-serif !important;
+  font-family: "M PLUS Rounded 1c", sans-serif !important;
+}
+
+html .v-application .title {
+  opacity: 0.6;
+  font-size: 22px !important;
 }
 </style>

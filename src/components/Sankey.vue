@@ -124,10 +124,10 @@
               v-for="(part, keyName) in format(node.name)"
               :key="keyName"
               :style="{
-                fontWeight: part.primary ? 'bold' : null,
-                fontSize: part.secondary ? '18px' : null,
+                fontWeight: part.primary ? '700' : '500',
+                fontSize: part.secondary ? '18px' : part.post ? '20px' : null,
               }"
-              :baseline-shift="part.secondary ? '6' : (part.pre ? 1 : (part.post ? 6 : null))"
+              :baseline-shift="part.secondary ? 6.3 : (part.pre ? -0.6 : (part.post ? 4 : null))"
               v-text="part.text" />
           </text>
           <g
