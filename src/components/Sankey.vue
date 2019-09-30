@@ -332,13 +332,23 @@ export default {
   fill: #000;
 }
 
-@keyframes selection {
+@keyframes selection-8 {
   from {
     stroke-dashoffset: 0;
   }
 
   to {
-    stroke-dashoffset: 9;
+    stroke-dashoffset: 8;
+  }
+}
+
+@keyframes selection-13 {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: 13;
   }
 }
 
@@ -348,7 +358,7 @@ export default {
   stroke-width: 1.5;
   stroke-linejoin: round;
   stroke-linecap: round;
-  animation: selection 0.4s linear infinite reverse;
+  animation: selection-13 0.4s linear infinite reverse;
 }
 
 .dark .node.active rect {
@@ -362,7 +372,7 @@ path.link.active {
   stroke-opacity: 1;
   stroke-linejoin: round;
   stroke-linecap: round;
-  animation: selection 0.4s linear infinite reverse;
+  animation: selection-8 0.6s linear infinite reverse;
 }
 
 .dark path.link.active {
