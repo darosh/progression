@@ -29,8 +29,64 @@
           cy="1"
           fill-opacity="0.333" />
       </marker>
+      <radialGradient id="gradient">
+        <stop
+          offset="0.10"
+          stop-color="transparent" />
+        <stop
+          offset="0.11"
+          :stop-color="rippleColor" />
+        <stop
+          offset="0.18"
+          :stop-color="rippleColor" />
+        <stop
+          offset="0.19"
+          stop-color="transparent" />
+        <stop
+          offset="0.30"
+          stop-color="transparent" />
+        <stop
+          offset="0.31"
+          :stop-color="rippleColor" />
+        <stop
+          offset="0.38"
+          :stop-color="rippleColor" />
+        <stop
+          offset="0.39"
+          stop-color="transparent" />
+        <stop
+          offset="0.50"
+          stop-color="transparent" />
+        <stop
+          offset="0.51"
+          :stop-color="rippleColor" />
+        <stop
+          offset="0.58"
+          :stop-color="rippleColor" />
+        <stop
+          offset="0.59"
+          stop-color="transparent" />
+      </radialGradient>
+      <symbol
+        id="ripply-scott"
+        viewBox="0 0 100 100">
+        <circle
+          fill="url(#gradient)"
+          cx="1"
+          cy="1"
+          r="1" />
+      </symbol>
     </defs>
     <g v-if="!!path">
+      <clipPath id="clipping">
+        <rect
+          v-if="lastNode"
+          :height="lastNode.y1 - lastNode.y0"
+          :width="nodeWidth"
+          :transform="`translate(${[lastNode.x0, lastNode.y0]})`"
+          rx="12"
+          ry="12" />
+      </clipPath>
       <g>
         <path
           v-for="(link, key) in graph.links"
@@ -57,7 +113,7 @@
             :style="{fill: node.color, stroke: stroke(node.color)}"
             @mouseenter="$emit('enter', node)"
             @mouseleave="$emit('leave', node)"
-            @click="$emit('clicked', node)" />
+            @click="ripple($event, 1, node), $emit('clicked', node)" />
           <text
             :y="(node.y1 - node.y0) / 2"
             dy=".35em"
@@ -92,11 +148,21 @@
         </g>
       </g>
     </g>
+    <g clip-path="url(#clipping)">
+      <use
+        ref="ripple"
+        height="100"
+        width="100"
+        xlink:href="#ripply-scott"
+        style="pointer-events: none;" />
+    </g>
   </svg>
 </template>
 <script>
 import { sankey, sankeyCenter, sankeyLinkHorizontal } from 'd3-sankey'
 import * as d3 from 'd3'
+
+import { TimelineMax, Linear } from 'gsap/TweenMax'
 
 export default {
   props: {
@@ -129,7 +195,9 @@ export default {
     margin: { top: 32, right: 32, bottom: 32, left: 32 },
     width: 1200,
     height: 720,
-    path: null
+    path: null,
+    lastNode: null,
+    rippleColor: null
   }),
   watch: {
     graph: {
@@ -166,6 +234,23 @@ export default {
       this.path = sankeyLinkHorizontal()
 
       san(graph)
+    },
+    async ripple (event, timing, node) {
+      this.rippleColor = this.$vuetify.theme.dark ? d3.rgb(node.color).brighter(1.5) : d3.rgb(node.color).darker(1.25)
+      this.lastNode = node
+      await new Promise(resolve => this.$nextTick(resolve))
+      const { ripple } = this.$refs
+      new TimelineMax().fromTo(ripple, timing, {
+        x: event.offsetX,
+        y: event.offsetY,
+        transformOrigin: '50% 50%',
+        scale: 0,
+        opacity: 0.87,
+        ease: Linear.easeOut
+      }, {
+        scale: 96,
+        opacity: 0
+      })
     }
   }
 }

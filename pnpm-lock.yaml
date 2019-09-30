@@ -4,8 +4,9 @@ dependencies:
   core-js: 2.6.9
   d3: 5.12.0
   d3-sankey: 0.12.3
+  gsap: 2.1.3
   rambdax: 2.14.1
-  tone: 14.4.3
+  tone: 14.4.5
   vue: 2.6.10
   vue-music-notation: 0.1.1
   vue-router: 3.1.3
@@ -2294,8 +2295,8 @@ packages:
   /browserslist/4.7.0:
     dependencies:
       caniuse-lite: 1.0.30000997
-      electron-to-chromium: 1.3.267
-      node-releases: 1.1.32
+      electron-to-chromium: 1.3.269
+      node-releases: 1.1.33
     dev: true
     hasBin: true
     resolution:
@@ -4016,10 +4017,10 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-kS/gEPzZs3Y1rRsbGX4UOSjtP/CeJP0CxSNZHYxGfVM/VgLcv0ZqM7C45YyTj2DI2g7+P9Dd24C+IMIg6D0nYQ==
-  /electron-to-chromium/1.3.267:
+  /electron-to-chromium/1.3.269:
     dev: true
     resolution:
-      integrity: sha512-9Q2ixAJC+oHjWNtJV0MQ4vJMCWSowIrC6V6vcr+bwPddTDHj2ddv9xxXCzf4jT/fy6HP7maPoW0gifXkRxCttQ==
+      integrity: sha512-t2ZTfo07HxkxTOUbIwMmqHBSnJsC9heqJUm7LwQu2iSk0wNhG4H5cMREtb8XxeCrQABDZ6IqQKY3yZq+NfAqwg==
   /elliptic/6.5.1:
     dependencies:
       bn.js: 4.11.8
@@ -5462,6 +5463,10 @@ packages:
     hasBin: true
     resolution:
       integrity: sha512-XEvB4mf8xkmjkdVTQoaEZ7bIZzXgA1CKwM9zspg/YOI4wDhWrHj/cg4sat0Y3km9PjMeHKrmPhCFNSk3/XN+1w==
+  /gsap/2.1.3:
+    dev: false
+    resolution:
+      integrity: sha512-8RFASCqi2FOCBuv7X4o7M6bLdy+1hbR0azg+MG7zz+EVsI+OmJblYsTk0GEepQd2Jg/ItMPiVTibF7r3EVxjZQ==
   /gzip-size/5.1.1:
     dependencies:
       duplexer: 0.1.1
@@ -7792,12 +7797,12 @@ packages:
     dev: true
     resolution:
       integrity: sha512-M4UBGcs4jeOK9CjTsYwkvH6/MzuUmGCyTW+kCY7uO+1ZVr0+FHGdPdIf5CCLqAaxnRrWidyoQlNkMIIVwbKB8Q==
-  /node-releases/1.1.32:
+  /node-releases/1.1.33:
     dependencies:
       semver: 5.7.1
     dev: true
     resolution:
-      integrity: sha512-VhVknkitq8dqtWoluagsGPn3dxTvN9fwgR59fV3D7sLBHe0JfDramsMI8n8mY//ccq/Kkrf8ZRHRpsyVZ3qw1A==
+      integrity: sha512-I0V30bWQEoHb+10W8oedVoUrdjW5wIkYm0w7vvcrPO95pZY738m1k77GF5sO0vKg5eXYg9oGtrMAETbgZGm11A==
   /nopt/4.0.1:
     dependencies:
       abbrev: 1.1.1
@@ -10663,12 +10668,12 @@ packages:
       node: '>=0.6'
     resolution:
       integrity: sha512-yaOH/Pk/VEhBWWTlhI+qXxDFXlejDGcQipMlyxda9nthulaxLZUNcUqFxokp0vcYnvteJln5FNQDRrxj3YcbVw==
-  /tone/14.4.3:
+  /tone/14.4.5:
     dependencies:
       standardized-audio-context: 21.2.4
     dev: false
     resolution:
-      integrity: sha512-ZjqGlKe0DVwVUthcc8cUrQfNTRwsliiMlrc+70wa7HRc2SVeUy9dH8r0rPOKWW7mCNq+/j/orjm4SpDhogbGYA==
+      integrity: sha512-uLKiwxFLlD/G1KM5dwsG0raH/HSv3p0ZzueI49Jo6aIeRHDrLCfleCghawaNkV1UKrNXSOhyy4vMDh6yOB4xyA==
   /toposort/1.0.7:
     dev: true
     resolution:
@@ -11704,6 +11709,7 @@ specifiers:
   eslint: ^5.16.0
   eslint-plugin-vue: ^5.0.0
   gh-pages: ^2.1.1
+  gsap: ^2.1.3
   napa: ^3.0.0
   rambdax: ^2.14.1
   sass: ^1.17.4
