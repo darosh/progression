@@ -1,6 +1,6 @@
 <template>
   <svg
-    id="chart"
+    ref="chart"
     :width="width"
     :height="height"
     :class="{dark: dark}">
@@ -111,9 +111,11 @@
             rx="12"
             ry="12"
             :style="{fill: node.color, stroke: stroke(node.color)}"
-            @mouseenter="$emit('enter', node)"
-            @mouseleave="$emit('leave', node)"
-            @click="ripple($event, 1, node), $emit('clicked', node)" />
+            @mouseenter="onEnter(node)"
+            @touchstart="onTouchStart($event, node)"
+            @touchend="onTouchEnd($event, node)"
+            @mousedown.stop.prevent="onMouseDown($event, node)"
+            @mouseup.stop.prevent="onMouseUp(node)" />
           <text
             :y="(node.y1 - node.y0) / 2"
             dy=".35em"
@@ -138,9 +140,11 @@
             <circle
               r="18"
               :style="{fill: altColor(node.color)}"
-              @mouseenter="$emit('enter', node)"
-              @mouseleave="$emit('leave', node)"
-              @click="ripple($event, 1, node), $emit('clicked-alt', { node, alt })" />
+              @mouseenter="onEnter(node)"
+              @touchstart="onTouchStart($event, {node, alt})"
+              @touchend="onTouchEnd($event, {node, alt})"
+              @mousedown.stop.prevent="onMouseDown($event, {node, alt})"
+              @mouseup.stop.prevent="onMouseUp({node, alt})" />
             <text
               dy=".35em"
               text-anchor="middle">
@@ -199,7 +203,8 @@ export default {
     height: 720,
     path: null,
     lastNode: null,
-    rippleColor: null
+    rippleColor: null,
+    lastEnter: null
   }),
   watch: {
     graph: {
@@ -212,6 +217,43 @@ export default {
     }
   },
   methods: {
+    onEnter (node) {
+      if (this.lastEnter) {
+        if (this.lastEnter === node) {
+          return
+        }
+
+        this.$emit('leave', this.lastEnter)
+      }
+
+      this.lastEnter = node
+
+      if (node) {
+        this.$emit('enter', node)
+      }
+    },
+    onTouchStart (event, node) {
+      if (event.cancelable) {
+        event.preventDefault()
+      }
+
+      this.onMouseDown(event, node)
+      this.onEnter(node.node || node)
+    },
+    onTouchEnd (event, node) {
+      if (event.cancelable) {
+        event.preventDefault()
+      }
+
+      this.onMouseUp(node)
+    },
+    onMouseDown (event, node) {
+      this.ripple(event, 1, node.node || node)
+      this.$emit('attack', node)
+    },
+    onMouseUp (node) {
+      this.$emit('release', node)
+    },
     stroke (color) {
       return d3.rgb(color).darker(0.5)
     },
@@ -238,13 +280,25 @@ export default {
       san(graph)
     },
     async ripple (event, timing, node) {
+      let x
+      let y
+
+      if (event.touches) {
+        const { left, top } = this.$refs.chart.getBoundingClientRect()
+        x = event.touches[0].clientX - left
+        y = event.touches[0].clientY - top
+      } else {
+        x = event.offsetX
+        y = event.offsetY
+      }
+
       this.rippleColor = this.$vuetify.theme.dark ? d3.rgb(node.color).brighter(1.5) : d3.rgb(node.color).darker(1.25)
       this.lastNode = node
       await new Promise(resolve => this.$nextTick(resolve))
       const { ripple } = this.$refs
       new TimelineMax().fromTo(ripple, timing, {
-        x: event.offsetX,
-        y: event.offsetY,
+        x,
+        y,
         transformOrigin: '50% 50%',
         scale: 0,
         opacity: 0.87,

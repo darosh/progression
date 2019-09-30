@@ -35,7 +35,12 @@ async function ready () {
   await initialized
 }
 
-export async function play (note) {
+export async function play (note, release = false) {
   await ready()
-  note.forEach((n, i) => current.triggerAttackRelease(n, 2, '+' + 0.02 * (i / (note.length - 1))))
+
+  if (release) {
+    current.triggerRelease(note)
+  } else {
+    current.triggerAttack(note)
+  }
 }

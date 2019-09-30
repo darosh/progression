@@ -134,8 +134,8 @@
               :format="format()"
               @enter="activate($event, true)"
               @leave="activate($event, false)"
-              @clicked="play"
-              @clicked-alt="playAlt" />
+              @attack="play"
+              @release="play($event, true)" />
           </v-card>
         </v-row>
         <v-row
@@ -218,7 +218,13 @@ export default {
 
       this.graph = toSankey(list)
     },
-    async play (object) {
+    async play (object, release = false) {
+      if (object.node) {
+        object = {
+          romanChord: { ...object.node.romanChord, chordType: object.alt }
+        }
+      }
+
       const chordInterval = coordToInterval(encode(object.romanChord)).name
       const acc = ['', '#', 'b'][this.acc]
       const baseNote = this.notes[this.note]
@@ -230,15 +236,14 @@ export default {
       this.piano = intervals.map(n => note(n).midi)
 
       if (this.midiOutput) {
-        this.midiOutput.playNote(this.piano, 'all', { duration: 500, velocity: 0.5 })
+        if (release) {
+          this.midiOutput.stopNote(this.piano)
+        } else {
+          this.midiOutput.playNote(this.piano)
+        }
       } else {
-        play(frequencies)
+        play(frequencies, release)
       }
-    },
-    playAlt ({ node, alt }) {
-      const romanChord = { ...node.romanChord, chordType: alt }
-
-      this.play({ romanChord })
     }
   }
 }
