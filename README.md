@@ -9,6 +9,7 @@
 ## To do
 
 - [ ] MIDI
+- [ ] Inversions
 
 ## Project setup
 ```
