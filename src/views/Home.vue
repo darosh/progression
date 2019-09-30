@@ -63,16 +63,42 @@
               Dark
             </v-btn>
           </v-btn-toggle>
-          <v-btn-toggle
-            v-model="midi"
-            class="ml-3"
-            rounded>
-            <v-btn
-              text
-              disabled>
-              MIDI
-            </v-btn>
-          </v-btn-toggle>
+          <v-menu bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                large
+                rounded
+                text
+                class="ml-3"
+                v-on="on"
+                @click="initMidi">
+                MIDI
+              </v-btn>
+            </template>
+            <v-card
+              v-if="midiStatus.loading"
+              class="pa-3">
+              <v-progress-circular
+                indeterminate
+                :size="48-3"
+                :width="6"
+                color="rgb(0, 255, 68)"
+                class="mr-2" />
+              <i>Loading MIDI outputs...</i>
+            </v-card>
+            <v-list v-else>
+              <v-list-item @click="midiOutput = null">
+                None
+              </v-list-item>
+              <v-divider />
+              <v-list-item
+                v-for="(output, key) in midiStatus.outputs"
+                :key="key"
+                @click="midiOutput = output">
+                {{ output.name }}
+              </v-list-item>
+            </v-list>
+          </v-menu>
           <div style="position: relative;">
             <keyboard
               :style="{visibility: playStatus.loading ? 'hidden' : null}"
@@ -141,6 +167,7 @@ import { transpose, chord } from '@tonaljs/chord'
 import { coordToInterval, encode, note, transpose as transposeNote } from '@tonaljs/tonal'
 import { formatRoman, formatTransposed } from '@/utils/format'
 import { play, playStatus } from '@/utils/play'
+import { initMidi, midiStatus } from '@/utils/midi'
 
 export default {
   components: { Sankey, Keyboard },
@@ -154,7 +181,9 @@ export default {
     notes: 'CDEFGAB'.split(''),
     note: 0,
     piano: [],
-    playStatus
+    playStatus,
+    midiStatus,
+    midiOutput: null
   }),
   watch: {
     type: {
@@ -167,6 +196,7 @@ export default {
   },
   methods: {
     activate,
+    initMidi,
     format () {
       if (this.roman === 0) {
         return formatRoman
@@ -198,7 +228,12 @@ export default {
       const intervals = chordData.intervals.map(trans)
       const frequencies = intervals.map(n => note(n).freq)
       this.piano = intervals.map(n => note(n).midi)
-      play(frequencies)
+
+      if (this.midiOutput) {
+        this.midiOutput.playNote(this.piano, 'all', { duration: 500, velocity: 0.5 })
+      } else {
+        play(frequencies)
+      }
     },
     playAlt ({ node, alt }) {
       const romanChord = { ...node.romanChord, chordType: alt }

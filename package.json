@@ -23,7 +23,8 @@
     "vue": "^2.6.10",
     "vue-music-notation": "^0.1.1",
     "vue-router": "^3.0.3",
-    "vuetify": "^2.0.0"
+    "vuetify": "^2.0.0",
+    "webmidi": "^2.5.1"
   },
   "devDependencies": {
     "@types/jest": "^23.1.4",
