@@ -8,7 +8,7 @@
 
 ## To do
 
-- [ ] MIDI
+- [x] MIDI output
 - [ ] Inversions
 
 ## Project setup
