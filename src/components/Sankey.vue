@@ -138,7 +138,9 @@
             <circle
               r="18"
               :style="{fill: altColor(node.color)}"
-              @click="$emit('clicked-alt', { node, alt })" />
+              @mouseenter="$emit('enter', node)"
+              @mouseleave="$emit('leave', node)"
+              @click="ripple($event, 1, node), $emit('clicked-alt', { node, alt })" />
             <text
               dy=".35em"
               text-anchor="middle">
