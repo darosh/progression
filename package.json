@@ -8,6 +8,7 @@
     "lint": "vue-cli-service lint --fix",
     "test:unit": "vue-cli-service test:unit",
     "install": "napa nbrosowsky/tonejs-instruments",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {
