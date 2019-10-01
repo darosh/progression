@@ -56,6 +56,14 @@
             </v-btn>
           </v-btn-toggle>
           <v-btn-toggle
+            v-model="simple"
+            class="ml-3"
+            rounded>
+            <v-btn text>
+              Simple
+            </v-btn>
+          </v-btn-toggle>
+          <v-btn-toggle
             v-model="dark"
             class="ml-3"
             rounded>
@@ -183,13 +191,15 @@ export default {
     piano: [],
     playStatus,
     midiStatus,
-    midiOutput: null
+    midiOutput: null,
+    simple: null
   }),
   watch: {
     type: {
       handler: 'draw',
       immediate: true
     },
+    simple: 'draw',
     dark (value) {
       this.$vuetify.theme.dark = value === 0
     }
@@ -214,9 +224,13 @@ export default {
       removeSlashes(list)
       const bgr = toBeGrouped(groupByNameAlt(list))
       mergeGroups(bgr, list)
-      list.forEach(object => { object.romanChord = romanNumeral(object.name) })
+
+      if (this.simple === 0) {
+        list.filter(({ group }) => group > 1).forEach(obj => { obj.removed = true })
+      }
 
       this.graph = toSankey(list)
+      this.graph.nodes.forEach(object => { object.romanChord = romanNumeral(object.name) })
     },
     async play (object, release = false) {
       if (object.node) {

@@ -139,7 +139,7 @@ export function toSankeyLinks (array: GraphNode[]) {
 
 export function toSankey (nodes: GraphNode[]) {
   return {
-    nodes,
+    nodes: nodes.filter(({ removed }) => !removed),
     links: toSankeyLinks(nodes).filter((link) => !link.source.removed && !link.target.removed)
   }
 }
