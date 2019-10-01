@@ -10,6 +10,8 @@ async function initialize () {
   const Tone = await import('tone')
   window.Tone = Tone
 
+  SampleLibrary.setExt('.mp3')
+
   const samples = SampleLibrary.load({
     instruments: ['piano'],
     baseUrl: 'samples/'

@@ -164,6 +164,7 @@ import { groups } from '../data/groups'
 import { romanNumeral } from '@tonaljs/roman-numeral'
 import { transpose, chord } from '@tonaljs/chord'
 import { coordToInterval, encode, note, transpose as transposeNote } from '@tonaljs/tonal'
+import { simplify } from '@tonaljs/note'
 import { formatRoman, formatTransposed } from '@/utils/format'
 import { play, playStatus } from '../utils/play'
 import { initMidi, midiStatus } from '../utils/midi'
@@ -231,7 +232,7 @@ export default {
       const chordData = chord(chordName)
       const trans = interval => transposeNote(transposeNote(`${baseNote}${acc}3`, chordInterval), interval)
       const intervals = chordData.intervals.map(trans)
-      const frequencies = intervals.map(n => note(n).freq)
+      const frequencies = intervals.map(n => simplify(note(n).name))
       this.piano = intervals.map(n => note(n).midi)
 
       if (this.midiOutput) {

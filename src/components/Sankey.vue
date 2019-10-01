@@ -3,7 +3,8 @@
     ref="chart"
     :width="width"
     :height="height"
-    :class="{dark: dark}">
+    :class="{dark: dark}"
+    @mouseup="onMouseUp(null)">
     <defs>
       <marker
         id="head-marker"
@@ -204,7 +205,8 @@ export default {
     path: null,
     lastNode: null,
     rippleColor: null,
-    lastEnter: null
+    lastEnter: null,
+    lastPlayed: null
   }),
   watch: {
     graph: {
@@ -249,10 +251,16 @@ export default {
     },
     onMouseDown (event, node) {
       this.ripple(event, 1, node.node || node)
+      this.lastPlayed = node
       this.$emit('attack', node)
     },
     onMouseUp (node) {
-      this.$emit('release', node)
+      if (!this.lastPlayed && !node) {
+        return
+      }
+
+      this.$emit('release', this.lastPlayed || node)
+      this.lastPlayed = null
     },
     stroke (color) {
       return d3.rgb(color).darker(0.5)
