@@ -232,7 +232,7 @@ export default {
       const chordData = chord(chordName)
       const trans = interval => transposeNote(transposeNote(`${baseNote}${acc}3`, chordInterval), interval)
       const intervals = chordData.intervals.map(trans)
-      const frequencies = intervals.map(n => simplify(note(n).name))
+      const frequencies = intervals.map(simplify)
       this.piano = intervals.map(n => note(n).midi)
 
       if (this.midiOutput) {

@@ -238,7 +238,11 @@ export function normalize (data: any, shapes: any) {
 }
 
 function redirect (from: any, to: any, array: any[]) {
-  array.splice(array.indexOf(from), 1, to)
+  if (array.indexOf(to) > -1) {
+    array.splice(array.indexOf(from), 1)
+  } else {
+    array.splice(array.indexOf(from), 1, to)
+  }
 }
 
 export function activate (node: GraphNode, value: boolean) {
