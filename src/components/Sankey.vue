@@ -86,8 +86,8 @@
           :height="lastNode.y1 - lastNode.y0"
           :width="nodeWidth"
           :transform="`translate(${[lastNode.x0, lastNode.y0]})`"
-          rx="12"
-          ry="12" />
+          :rx="lastNode.radius"
+          :ry="lastNode.radius" />
       </clipPath>
       <g>
         <path
@@ -110,8 +110,8 @@
           <rect
             :height="node.y1 - node.y0"
             :width="nodeWidth"
-            rx="12"
-            ry="12"
+            :rx="node.radius"
+            :ry="node.radius"
             :style="{fill: node.color, stroke: stroke(node.color)}"
             @mouseenter="onEnter(node)"
             @touchstart="onTouchStart($event, node)"

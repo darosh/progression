@@ -16,6 +16,7 @@ interface GraphNode {
   parents: GraphNode[]
   children: GraphNode[]
   color: string
+  radius: number
   removed: boolean
   alts: string[]
   active: boolean
@@ -44,6 +45,7 @@ export function expandMap (dic: Dictionary<GraphNodeSource>[], shapes: any) {
     obj.alt = obj.alt || ''
     obj.alts = !obj.alt ? [] : obj.alt.split(',')
     obj.color = shapes[obj.group][0]
+    obj.radius = shapes[obj.group][4]
     obj.parents = obj.parents || []
 
     obj.parents.push(...obj.links.map(lid => {
