@@ -158,16 +158,15 @@
 import Sankey from '../components/Sankey'
 import Keyboard from '../components/Keyboard'
 
-import major from '../data/progression-major'
-import minor from '../data/progression-minor'
+import { major, minor } from '../data'
 import { removeSlashes, toSankey, toBeGrouped, mergeGroups, groupByNameAlt, normalize, activate } from '../utils/graph'
-import { shapes } from '@/data/shapes'
+import { groups } from '../data/groups'
 import { romanNumeral } from '@tonaljs/roman-numeral'
 import { transpose, chord } from '@tonaljs/chord'
 import { coordToInterval, encode, note, transpose as transposeNote } from '@tonaljs/tonal'
 import { formatRoman, formatTransposed } from '@/utils/format'
-import { play, playStatus } from '@/utils/play'
-import { initMidi, midiStatus } from '@/utils/midi'
+import { play, playStatus } from '../utils/play'
+import { initMidi, midiStatus } from '../utils/midi'
 
 export default {
   components: { Sankey, Keyboard },
@@ -210,7 +209,7 @@ export default {
       }
     },
     draw () {
-      const list = normalize(this.type ? minor : major, shapes)
+      const list = normalize(this.type ? minor : major, groups)
       removeSlashes(list)
       const bgr = toBeGrouped(groupByNameAlt(list))
       mergeGroups(bgr, list)

@@ -1,11 +1,10 @@
 import { groupBy } from 'rambdax'
 
-interface GraphData extends Array<any> {
-  0: number
-  1: string
-  2: string
-  3: number[]
-  4: number
+interface GraphNodeSource {
+  name: string
+  alt?: string
+  links: number[]
+  group: number
 }
 
 interface GraphNode {
@@ -14,41 +13,42 @@ interface GraphNode {
   alt: string
   links: number[],
   group: number
-  parents?: GraphNode[]
-  children?: GraphNode[]
-  color?: string
-  removed?: boolean
-  alts?: string[]
-  active?: boolean
+  parents: GraphNode[]
+  children: GraphNode[]
+  color: string
+  removed: boolean
+  alts: string[]
+  active: boolean
 }
 
 interface GraphLink {
   source: any
   target: any
-  value: string
+  value: number
 }
 
 interface Dictionary<T> {[index: number]: T}
 
-export function mapToDic<T> (map: GraphData[], value: (x: any) => T = x => x): Dictionary<T> {
-  return map.reduce((acc, i: GraphData) => {
-    acc[i[0]] = value(i)
+export function expandMap (dic: Dictionary<GraphNodeSource>[], shapes: any) {
+  const copy: Dictionary<GraphNode> = {};
 
-    return acc
-  }, <Dictionary<T>>{})
-}
+  (<[number, GraphNode][]><unknown>Object.entries(dic)).forEach(([id, o]) => {
+    const obj = { ...o }
+    copy[id] = obj
+  });
 
-export function expandMap (map: GraphData[], shapes: any) {
-  const dic = mapToDic(map, mapToObject)
-  const values = Object.values(dic)
-
-  values.forEach((obj: GraphNode) => {
+  (<[number, GraphNode][]><unknown>Object.entries(copy)).forEach(([id, obj]) => {
+    obj.id = id
     obj.active = false
+    obj.removed = false
+    obj.alt = obj.alt || ''
     obj.alts = !obj.alt ? [] : obj.alt.split(',')
-    obj.color = shapes[obj.group - 1][0]
+    obj.color = shapes[obj.group][0]
     obj.parents = obj.parents || []
-    obj.parents.push(...obj.links.map(id => {
-      const parent = dic[id]
+
+    obj.parents.push(...obj.links.map(lid => {
+      const parent = <GraphNode><unknown>copy[lid]
+
       parent.children = parent.children || []
       parent.children.push(obj)
 
@@ -56,13 +56,10 @@ export function expandMap (map: GraphData[], shapes: any) {
     }))
   })
 
-  return { values, dic }
-}
-
-function mapToObject (data: GraphData): GraphNode {
-  const [id, name, alt, links, group] = data
-
-  return { removed: false, id, name, alt, links, group }
+  return {
+    values: Object.values(copy),
+    dic: copy
+  }
 }
 
 function removeObject (object: GraphNode, array: GraphNode[]) {
@@ -135,7 +132,7 @@ function hasParents (obj: GraphNode) {
 
 export function toSankeyLinks (array: GraphNode[]) {
   return array.reduce((acc: GraphLink[], source: GraphNode) => {
-    acc.push(...(source.parents || []).map(target => ({ source, target, value: '1' })))
+    acc.push(...(source.parents || []).map(target => ({ source, target, value: 1 })))
     return acc
   }, [])
 }
@@ -236,7 +233,7 @@ export function normalize (data: any, shapes: any) {
 
     return values
   } else {
-    return expandMap(data, shapes).values
+    return expandMap(data.map, shapes).values
   }
 }
 

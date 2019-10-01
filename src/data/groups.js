@@ -1,4 +1,4 @@
-export const shapes = [
+export const groups = [
   ['#2af', 'rect', 64, 64],
   ['#0df', 'rect', 36, 36],
   ['#0f4', 'circle', 24, 24],
