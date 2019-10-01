@@ -3,7 +3,8 @@
     ref="chart"
     :width="width"
     :height="height"
-    :class="{dark: dark}"
+    :class="{dark: dark, highlight: highlight}"
+    @mousedown="highlight = false"
     @mouseup="onMouseUp(null)">
     <defs>
       <marker
@@ -206,7 +207,8 @@ export default {
     lastNode: null,
     rippleColor: null,
     lastEnter: null,
-    lastPlayed: null
+    lastPlayed: null,
+    highlight: false
   }),
   watch: {
     graph: {
@@ -250,6 +252,7 @@ export default {
       this.onMouseUp(node)
     },
     onMouseDown (event, node) {
+      this.highlight = true
       this.ripple(event, 1, node.node || node)
       this.lastPlayed = node
       this.$emit('attack', node)
@@ -439,5 +442,13 @@ path.link.active {
 
 .dark path.link.active {
   stroke: #fff !important;
+}
+
+.highlight .node:not(.active) rect, .highlight .node:not(.active) circle {
+  opacity: 0.28;
+}
+
+.highlight .link:not(.active) {
+  opacity: 0.24;
 }
 </style>
