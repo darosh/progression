@@ -171,6 +171,7 @@ import { sankey, sankeyCenter, sankeyLinkHorizontal } from 'd3-sankey'
 import * as d3 from 'd3'
 
 import { TimelineMax, Linear } from 'gsap/TweenMax'
+import { debounce } from 'rambdax'
 
 export default {
   props: {
@@ -197,28 +198,35 @@ export default {
     simpleFormat: {
       type: Function,
       default: text => text.replace(/b/g, '♭')
+    },
+    width: {
+      type: Number,
+      default: 1200
+    },
+    height: {
+      type: Number,
+      default: 720
     }
   },
-  data: () => ({
-    margin: { top: 32, right: 32, bottom: 32, left: 32 },
-    width: 1200,
-    height: 720,
-    path: null,
-    lastNode: null,
-    rippleColor: null,
-    lastEnter: null,
-    lastPlayed: null,
-    highlight: false
-  }),
+  data () {
+    return {
+      margin: { top: 32, right: 32, bottom: 32, left: 32 },
+      path: null,
+      lastNode: null,
+      rippleColor: null,
+      lastEnter: null,
+      lastPlayed: null,
+      highlight: false,
+      lazyDraw: debounce(this.draw, 50)
+    }
+  },
   watch: {
     graph: {
-      handler (value) {
-        if (value) {
-          this.draw()
-        }
-      },
+      handler: 'draw',
       immediate: true
-    }
+    },
+    width: 'lazyDraw',
+    height: 'lazyDraw'
   },
   methods: {
     onEnter (node) {
@@ -274,6 +282,10 @@ export default {
         : d3.color(d3.interpolateCubehelix(d3.rgb(color), '#000')(0.33)).darker(0.33)
     },
     draw () {
+      if (!this.graph) {
+        return
+      }
+
       const { margin, graph, iterations } = this
       const width = this.width - margin.right
       const height = this.height - margin.bottom

@@ -132,18 +132,31 @@
           no-gutters
           justify="center">
           <v-card
-            style="border-radius: 24px;"
+            ref="chart"
+            style="border-radius: 24px; overflow-x: auto;"
             elevation="1">
             <sankey
               v-if="!!graph"
               :graph="graph"
               class="d-block"
+              :width="width"
+              :height="height"
               :dark="$vuetify.theme.dark"
               :format="format()"
               @enter="activate($event, true)"
               @leave="activate($event, false)"
               @attack="play"
               @release="play($event, true)" />
+            <div
+              style="position: absolute; bottom: 0; right: 0;"
+              class="pa-2">
+              <v-btn
+                icon
+                large
+                @click="full">
+                <v-icon v-text="`mdi-fullscreen`" />
+              </v-btn>
+            </div>
           </v-card>
         </v-row>
         <v-row
@@ -163,19 +176,21 @@
   </v-app>
 </template>
 <script>
+/* eslint-disable no-unused-vars */
+
+import { romanNumeral } from '@tonaljs/roman-numeral'
+
 import Sankey from '../components/Sankey'
 import Keyboard from '../components/Keyboard'
 
-import { major, minor } from '../data'
-import { removeSlashes, toSankey, toBeGrouped, mergeGroups, groupByNameAlt, normalize, activate } from '../utils/graph'
+import { major, minor, blues8, blues12 } from '../data'
 import { groups } from '../data/groups'
-import { romanNumeral } from '@tonaljs/roman-numeral'
-import { transpose, chord } from '@tonaljs/chord'
-import { coordToInterval, encode, note, transpose as transposeNote } from '@tonaljs/tonal'
-import { simplify } from '@tonaljs/note'
-import { formatRoman, formatTransposed } from '@/utils/format'
-import { play, playStatus } from '../utils/play'
+
+import { removeSlashes, toSankey, toBeGrouped, mergeGroups, groupByNameAlt, normalize, activate } from '../utils/graph'
+import { formatRoman, transposeFormatTransposed } from '../utils/format'
+import { parseChord } from '../utils/chord'
 import { initMidi, midiStatus } from '../utils/midi'
+import { play, playStatus } from '../utils/play'
 
 export default {
   components: { Sankey, Keyboard },
@@ -192,8 +207,20 @@ export default {
     playStatus,
     midiStatus,
     midiOutput: null,
-    simple: null
+    simple: null,
+    isFull: false
   }),
+  computed: {
+    baseNote () {
+      return this.notes[this.note] + ['', '#', 'b'][this.acc]
+    },
+    width () {
+      return this.isFull ? this.$vuetify.breakpoint.width : 1200
+    },
+    height () {
+      return this.isFull ? this.$vuetify.breakpoint.height : 720
+    }
+  },
   watch: {
     type: {
       handler: 'draw',
@@ -211,17 +238,14 @@ export default {
       if (this.roman === 0) {
         return formatRoman
       } else {
-        return name => {
-          const r = romanNumeral(name)
-          const n = transpose(this.notes[this.note] + ['', '#', 'b'][this.acc], coordToInterval(encode(r)).name)
-
-          return formatTransposed(n, r.chordType)
-        }
+        return name => transposeFormatTransposed(name, this.baseNote)
       }
     },
     draw () {
-      const list = normalize(this.type ? minor : major, groups)
-      removeSlashes(list)
+      // const list = normalize(blues8, groups)
+      // const list = normalize(blues12, groups)
+      const list = normalize(this.type ? minor : major, groups, false)
+      // removeSlashes(list)
       const bgr = toBeGrouped(groupByNameAlt(list))
       mergeGroups(bgr, list)
 
@@ -239,15 +263,9 @@ export default {
         }
       }
 
-      const chordInterval = coordToInterval(encode(object.romanChord)).name
-      const acc = ['', '#', 'b'][this.acc]
-      const baseNote = this.notes[this.note]
-      const chordName = transpose(baseNote + acc + object.romanChord.chordType.replace('M9', 'maj9').replace('2', 'add2').replace(/^b9$/, '7b9'), chordInterval)
-      const chordData = chord(chordName)
-      const trans = interval => transposeNote(transposeNote(`${baseNote}${acc}3`, chordInterval), interval)
-      const intervals = chordData.intervals.map(trans)
-      const frequencies = intervals.map(simplify)
-      this.piano = intervals.map(n => note(n).midi)
+      const { midi, notes } = parseChord(object, this.baseNote)
+
+      this.piano = midi
 
       if (this.midiOutput) {
         if (release) {
@@ -256,7 +274,18 @@ export default {
           this.midiOutput.playNote(this.piano)
         }
       } else {
-        play(frequencies, release)
+        play(notes, release)
+      }
+    },
+    full () {
+      if (!document.fullscreenElement) {
+        this.$refs.chart.$el.requestFullscreen()
+        this.isFull = true
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen()
+          this.isFull = false
+        }
       }
     }
   }

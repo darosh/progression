@@ -1,4 +1,7 @@
 import { romanNumeral } from '@tonaljs/roman-numeral'
+import { transpose } from '@tonaljs/chord'
+import { coordToInterval, encode, transpose as transposeNote } from '@tonaljs/tonal'
+import { getBassInterval, parseBass } from './chord'
 
 function replaceSigns (acc) {
   return acc.replace(/#/g, '♯').replace(/b/g, '♭')
@@ -35,7 +38,7 @@ export function formatRoman (name) {
   return format
 }
 
-export function formatTransposed (name, chordType) {
+export function formatTransposed (name, chordType, baseNote) {
   const parts = name.split('')
 
   const format = []
@@ -53,11 +56,27 @@ export function formatTransposed (name, chordType) {
   }
 
   if (chordType) {
+    const { type, bass, acc } = parseBass(chordType)
+
+    let bassText = null
+
+    if (bass) {
+      const bassInterval = getBassInterval(bass, acc)
+      bassText = `/${transposeNote(baseNote, bassInterval)}`
+    }
+
     format.push({
-      text: replaceType(chordType),
+      text: replaceType(type) + (bassText || ''),
       secondary: true
     })
   }
 
   return format
+}
+
+export function transposeFormatTransposed (name, baseNote) {
+  const r = romanNumeral(name)
+  const n = transpose(baseNote, coordToInterval(encode(r)).name)
+
+  return formatTransposed(n, r.chordType, baseNote)
 }

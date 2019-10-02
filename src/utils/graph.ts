@@ -210,8 +210,8 @@ function insertMissing (to: GraphNode[], from: GraphNode[], root: GraphNode) {
   }
 }
 
-export function normalize (data: any, shapes: any) {
-  if (data.joints) {
+export function normalize (data: any, shapes: any, useJoints = false) {
+  if (useJoints && data.joints) {
     const { dic, values } = expandMap(data.map, shapes)
 
     for (const joint of data.joints) {

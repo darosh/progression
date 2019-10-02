@@ -6,10 +6,18 @@
 
 [https://darosh.github.io/progression/](https://darosh.github.io/progression/)
 
-## To do
+## To do / Ideas
 
 - [x] MIDI output
+- [x] Full screen
+- [x] Bass notation
+- [ ] MIDI channel mapping (bass, mid, voice, pitch)
 - [ ] Inversions
+- [ ] Polyharmony (multitouch, piano preview)
+- [ ] Touch / pen velocity
+- [ ] More charts / progressions / layouts / (simple based on features?)
+- [ ] Highlight T/D/S
+- [ ] redesign node joints
 
 ## Project setup
 ```
