@@ -49,6 +49,12 @@ export function play (midiOutput, notes, release) {
       midiOutput.stopNote(releasedNotes)
     }
   } else {
+    const toStop = notes.filter(node => store[node])
+
+    if (toStop.length) {
+      midiOutput.stopNote(toStop)
+    }
+
     midiOutput.playNote(notes)
     register(notes, 1)
   }

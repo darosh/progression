@@ -51,6 +51,12 @@ export async function play (notes, release = false) {
       current.triggerRelease(releasedNotes)
     }
   } else {
+    const toStop = notes.filter(node => store[node])
+
+    if (toStop.length) {
+      current.triggerRelease(toStop)
+    }
+
     current.triggerAttack(notes)
     // console.log('[ON]', notes.toString())
     register(notes, 1)
