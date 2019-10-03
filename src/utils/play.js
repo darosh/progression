@@ -2,6 +2,8 @@ import { SampleLibrary } from '../utils/samples'
 
 let current
 let initialized
+const store = {}
+
 export const playStatus = { loading: false }
 
 async function initialize () {
@@ -37,12 +39,27 @@ async function ready () {
   await initialized
 }
 
-export async function play (note, release = false) {
+export async function play (notes, release = false) {
   await ready()
 
   if (release) {
-    current.triggerRelease(note)
+    register(notes, -1)
+    const releasedNotes = notes.filter(note => !store[note])
+
+    if (releasedNotes.length) {
+      // console.log('[OFF]', releasedNotes.toString())
+      current.triggerRelease(releasedNotes)
+    }
   } else {
-    current.triggerAttack(note)
+    current.triggerAttack(notes)
+    // console.log('[ON]', notes.toString())
+    register(notes, 1)
+  }
+}
+
+function register (notes, value) {
+  for (const note of notes) {
+    store[note] = store[note] || 0
+    store[note] += value
   }
 }

@@ -268,15 +268,13 @@ export default {
       this.graph.nodes.forEach(object => { object.romanChord = romanNumeral(object.name) })
     },
     async play (object, release = false) {
-      if (object.node) {
-        object = {
-          romanChord: { ...object.node.romanChord, chordType: object.alt }
-        }
+      const romanChord = object.romanChord || { ...object.node.romanChord, chordType: object.alt }
+      // const id = [object.id || object.node.id, romanChord.roman, romanChord.chordType || '*', this.baseNote].join('_')
+      const { midi, notes } = parseChord(romanChord, this.baseNote)
+
+      if (!release) {
+        this.piano = midi
       }
-
-      const { midi, notes } = parseChord(object, this.baseNote)
-
-      this.piano = midi
 
       if (this.midiOutput) {
         if (release) {

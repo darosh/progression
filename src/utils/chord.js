@@ -5,7 +5,7 @@ import { names, substract, add } from '@tonaljs/interval'
 
 const intervalNames = names()
 
-export function parseChord ({ romanChord }, baseNote) {
+export function parseChord (romanChord, baseNote) {
   const chordInterval = coordToInterval(encode(romanChord)).name
   const { type, bass, acc } = parseBass(romanChord.chordType)
   const chordName = transpose(baseNote + normalizeChordType(type), chordInterval)

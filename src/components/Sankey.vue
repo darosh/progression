@@ -220,7 +220,7 @@ export default {
       lastNode: null,
       rippleColor: null,
       lastEnter: null,
-      lastPlayed: null,
+      lastPlayed: [],
       highlight: false,
       lazyDraw: debounce(this.draw, 600)
     }
@@ -280,16 +280,15 @@ export default {
     onMouseDown (event, node) {
       this.highlight = true
       this.ripple(event, 1, node.node || node)
-      this.lastPlayed = node
+      this.lastPlayed.push(node)
       this.$emit('attack', node)
     },
     onMouseUp (node) {
-      if (!this.lastPlayed && !node) {
-        return
+      if (node) {
+        this.$emit('release', node)
+      } else if (this.lastPlayed.length) {
+        this.$emit('release', this.lastPlayed.shift())
       }
-
-      this.$emit('release', this.lastPlayed || node)
-      this.lastPlayed = null
     },
     stroke (color) {
       return d3.rgb(color).darker(0.5)
