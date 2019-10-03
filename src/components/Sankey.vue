@@ -4,7 +4,7 @@
     :width="width"
     :height="height"
     :class="{dark: dark, highlight: highlight}"
-    @touchstart="onGlobalTouch"
+    @touchend="onGlobalTouch"
     @mousedown="highlight = false"
     @mouseup="onMouseUp(null)">
     <defs>

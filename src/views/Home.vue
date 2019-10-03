@@ -1,14 +1,199 @@
 <template>
   <v-app>
+    <v-navigation-drawer
+      v-model="showMenu"
+      app
+      width="380"
+      :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-4'">
+      <v-list class="py-2">
+        <v-list-item class="pt-5 pb-5 ma-0">
+          <v-flex />
+          <v-btn-toggle
+            v-model="type"
+            mandatory
+            rounded>
+            <v-btn text>
+              Major
+            </v-btn>
+            <v-btn text>
+              Minor
+            </v-btn>
+          </v-btn-toggle>
+        </v-list-item>
+        <v-divider />
+        <v-list-item class="py-5">
+          <v-flex />
+          <v-btn-toggle
+            v-model="note"
+            rounded
+            mandatory>
+            <v-btn
+              v-for="key in notes"
+              :key="key"
+              text
+              v-text="key" />
+          </v-btn-toggle>
+        </v-list-item>
+        <v-list-item class="pb-5">
+          <v-spacer />
+          <v-btn-toggle
+            v-model="acc"
+            mandatory
+            rounded>
+            <v-btn text>
+              <span class="sign">♮</span>
+            </v-btn>
+            <v-btn text>
+              <span class="sign">♯</span>
+            </v-btn>
+            <v-btn text>
+              <span class="sign">♭</span>
+            </v-btn>
+          </v-btn-toggle>
+        </v-list-item>
+        <v-divider />
+        <v-list-item class="py-5">
+          <v-flex />
+          <v-btn-toggle
+            v-model="roman"
+            rounded>
+            <v-btn text>
+              Roman
+            </v-btn>
+          </v-btn-toggle>
+        </v-list-item>
+        <v-divider />
+        <v-list-item class="py-5">
+          <v-flex />
+          <v-btn-toggle
+            v-model="simple"
+            rounded>
+            <v-btn text>
+              Simple
+            </v-btn>
+          </v-btn-toggle>
+        </v-list-item>
+        <v-divider />
+        <v-list-item class="py-5">
+          <v-flex />
+          <v-btn-toggle
+            v-model="dark"
+            rounded>
+            <v-btn text>
+              Dark
+            </v-btn>
+          </v-btn-toggle>
+        </v-list-item>
+        <v-divider />
+        <v-list-item class="py-5">
+          <v-flex />
+          <v-menu bottom>
+            <template v-slot:activator="{ on }">
+              <v-btn
+                text
+                v-on="on"
+                @click="initMidi">
+                MIDI
+              </v-btn>
+            </template>
+            <v-card
+              v-if="midiStatus.loading"
+              class="pa-3">
+              <v-progress-circular
+                indeterminate
+                :size="48-3"
+                :width="6"
+                color="rgb(0, 255, 68)"
+                class="mr-2" />
+              <i>Loading MIDI outputs...</i>
+            </v-card>
+            <v-list v-else>
+              <v-list-item @click="midiOutput = null">
+                <v-list-item-title>
+                  None
+                </v-list-item-title>
+                <v-list-item-action>
+                  <v-icon v-if="midiOutput === null">
+                    mdi-check
+                  </v-icon>
+                </v-list-item-action>
+              </v-list-item>
+              <v-divider />
+              <v-list-item
+                v-for="(output, key) in midiStatus.outputs"
+                :key="key"
+                @click="midiOutput = output">
+                <v-list-item-title>
+                  {{ output.name }}
+                </v-list-item-title>
+                <v-list-item-action>
+                  <v-icon v-if="midiOutput === output">
+                    mdi-check
+                  </v-icon>
+                </v-list-item-action>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </v-list-item>
+        <v-divider />
+      </v-list>
+      <v-row
+        no-gutters
+        justify="center"
+        align="center"
+        class="pt-5"
+        style="opacity: 0.6">
+        <span class="mx-3">
+          Made in Brno, 2019, <a href="https://github.com/darosh/progression">GitHub</a>
+        </span>
+      </v-row>
+    </v-navigation-drawer>
     <v-content>
       <v-container
         fluid
         class="pa-5">
         <v-row
+          class="pb-5"
+          no-gutters
+          align="center">
+          <v-btn
+            fab
+            depressed
+            color="transparent"
+            @click="showMenu = !showMenu">
+            <v-icon>mdi-menu</v-icon>
+          </v-btn>
+          <span class="title ml-5">Progression</span>
+          <v-spacer />
+          <v-row style="position: relative;">
+            <v-spacer />
+            <v-flex />
+            <keyboard
+              :style="{visibility: playStatus.loading ? 'hidden' : null}"
+              :notes="piano"
+              :start="36"
+              :length="61"
+              no-gutters
+              class="ml-3 d-block" />
+            <div
+              v-if="playStatus.loading"
+              style="position: absolute; top: 0px; right: 0; opacity: 0.87">
+              <v-progress-circular
+                indeterminate
+                :size="48-3"
+                :width="6"
+                color="rgb(0, 255, 68)"
+                class="ml-3 mr-2" />
+              <i>Loading sounds...</i>
+            </div>
+          </v-row>
+        </v-row>
+
+        <v-row
+          v-if="false"
           no-gutters
           class="mb-5"
-          align="center"
-          justify="center">
+          align="center">
           <span class="title mr-5">Progression</span>
           <v-btn-toggle
             v-model="type"
@@ -148,22 +333,24 @@
           <v-card
             ref="chart"
             :color="$vuetify.theme.dark && isFull ? 'grey darken-4' : null"
-            style="border-radius: 24px; overflow-x: auto;"
+            style="border-radius: 24px;"
             elevation="1">
-            <sankey
-              v-if="!!graph"
-              :graph="graph"
-              :margin="margin"
-              class="d-block"
-              :width="width"
-              :height="height"
-              :dark="$vuetify.theme.dark"
-              :format="format()"
-              :node-size="nodeWidth"
-              @enter="activate($event, true)"
-              @leave="activate($event, false)"
-              @attack="play"
-              @release="play($event, true)" />
+            <div style="overflow-x: auto;">
+              <sankey
+                v-if="!!graph"
+                :graph="graph"
+                :margin="margin"
+                class="d-block"
+                :width="width"
+                :height="height"
+                :dark="$vuetify.theme.dark"
+                :format="format()"
+                :node-size="nodeWidth"
+                @enter="activate($event, true)"
+                @leave="activate($event, false)"
+                @attack="play"
+                @release="play($event, true)" />
+            </div>
             <div
               style="position: absolute; bottom: 0; right: 0;"
               class="pa-2">
@@ -175,18 +362,6 @@
               </v-btn>
             </div>
           </v-card>
-        </v-row>
-        <v-row
-          no-gutters
-          justify="center"
-          align="center"
-          class="pt-3"
-          style="opacity: 0.6">
-          <span style="font-size: 24px;">𝄆</span>
-          <span class="mx-3">
-            Made in Brno, 2019, <a href="https://github.com/darosh/progression">GitHub</a>
-          </span>
-          <span style="font-size: 24px">𝄇</span>
         </v-row>
       </v-container>
     </v-content>
@@ -212,6 +387,7 @@ import { play, playStatus } from '../utils/play'
 export default {
   components: { Sankey, Keyboard },
   data: () => ({
+    showMenu: true,
     type: 0,
     dark: null,
     acc: 0,
@@ -232,10 +408,10 @@ export default {
       return this.notes[this.note] + ['', '#', 'b'][this.acc]
     },
     width () {
-      return this.isFull ? this.$vuetify.breakpoint.width : 1200
+      return this.isFull ? Math.max(800, this.$vuetify.breakpoint.width) : Math.max(800, Math.min(this.$vuetify.breakpoint.width - 48, 1200))
     },
     height () {
-      return this.isFull ? this.$vuetify.breakpoint.height : 720
+      return this.isFull ? Math.max(480, this.$vuetify.breakpoint.height) : Math.max(480, Math.min(this.$vuetify.breakpoint.height - 120, 720))
     },
     margin () {
       return this.isFull ? { top: 48, right: 48, bottom: 48, left: 48 } : { top: 32, right: 32, bottom: 32, left: 32 }
