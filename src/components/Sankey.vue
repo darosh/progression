@@ -185,7 +185,7 @@ export default {
       type: Number,
       default: 6
     },
-    nodeWidth: {
+    nodeSize: {
       type: Number,
       default: 64
     },
@@ -216,6 +216,7 @@ export default {
   },
   data () {
     return {
+      nodeWidth: this.nodeSize,
       path: null,
       lastNode: null,
       rippleColor: null,
@@ -235,6 +236,7 @@ export default {
       handler: 'draw',
       immediate: true
     },
+    nodeSize: 'lazyDraw',
     width: 'lazyDraw',
     height: 'lazyDraw',
     margin: 'lazyDraw'
@@ -304,13 +306,15 @@ export default {
         return
       }
 
+      this.nodeWidth = this.nodeSize
+
       const { margin, graph, iterations } = this
       const width = this.width - margin.right
       const height = this.height - margin.bottom
 
       const san = sankey()
         .nodeWidth(this.nodeWidth)
-        .nodePadding(12)
+        .nodePadding(Math.floor(height / 240) * 6)
         // .nodeSort((b, a) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
         // .nodeSort((a, b) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
         .iterations(iterations)

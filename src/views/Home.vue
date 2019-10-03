@@ -159,7 +159,7 @@
               :height="height"
               :dark="$vuetify.theme.dark"
               :format="format()"
-              :node-width="nodeWidth"
+              :node-size="nodeWidth"
               @enter="activate($event, true)"
               @leave="activate($event, false)"
               @attack="play"
