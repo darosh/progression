@@ -38,7 +38,7 @@ export function parseBass (chordType) {
   let parsedBass
 
   if (bass && (bass[0] === 'b' || bass[0] === '#')) {
-    acc = bass[0] === 'b' ? '-2m' : '2m'
+    acc = bass[0] === 'b' ? '-1A' : '1A'
     parsedBass = bass.slice(1)
   }
 
