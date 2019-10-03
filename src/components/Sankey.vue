@@ -17,7 +17,7 @@
         refX="-0.4">
         <path
           d="M0,0 L1.6,0.8 0,1.6"
-          fill-opacity="0.333" />
+          fill-opacity="0.333"/>
       </marker>
       <marker
         id="start-marker"
@@ -30,45 +30,45 @@
           r="0.6"
           cx="1"
           cy="1"
-          fill-opacity="0.333" />
+          fill-opacity="0.333"/>
       </marker>
       <radialGradient id="gradient">
         <stop
           offset="0.10"
-          stop-color="transparent" />
+          stop-color="transparent"/>
         <stop
           offset="0.11"
-          :stop-color="rippleColor" />
+          :stop-color="rippleColor"/>
         <stop
           offset="0.18"
-          :stop-color="rippleColor" />
+          :stop-color="rippleColor"/>
         <stop
           offset="0.19"
-          stop-color="transparent" />
+          stop-color="transparent"/>
         <stop
           offset="0.30"
-          stop-color="transparent" />
+          stop-color="transparent"/>
         <stop
           offset="0.31"
-          :stop-color="rippleColor" />
+          :stop-color="rippleColor"/>
         <stop
           offset="0.38"
-          :stop-color="rippleColor" />
+          :stop-color="rippleColor"/>
         <stop
           offset="0.39"
-          stop-color="transparent" />
+          stop-color="transparent"/>
         <stop
           offset="0.50"
-          stop-color="transparent" />
+          stop-color="transparent"/>
         <stop
           offset="0.51"
-          :stop-color="rippleColor" />
+          :stop-color="rippleColor"/>
         <stop
           offset="0.58"
-          :stop-color="rippleColor" />
+          :stop-color="rippleColor"/>
         <stop
           offset="0.59"
-          stop-color="transparent" />
+          stop-color="transparent"/>
       </radialGradient>
       <symbol
         id="ripply-scott"
@@ -77,7 +77,7 @@
           fill="url(#gradient)"
           cx="1"
           cy="1"
-          r="1" />
+          r="1"/>
       </symbol>
     </defs>
     <g v-if="!!path">
@@ -88,7 +88,7 @@
           :width="nodeWidth"
           :transform="`translate(${[lastNode.x0, lastNode.y0]})`"
           :rx="lastNode.radius"
-          :ry="lastNode.radius" />
+          :ry="lastNode.radius"/>
       </clipPath>
       <g>
         <path
@@ -99,14 +99,14 @@
           marker-start="url(#start-marker)"
           marker-end="url(#head-marker)"
           :d="path(link)"
-          :style="{stroke: stroke(link.source.color)}" />
+          :style="{stroke: stroke(link.source.color)}"/>
       </g>
       <g>
         <g
           v-for="(node, key) in graph.nodes"
           :key="key"
           class="node"
-          :class="{active: node.active}"
+          :class="{active: node.active, alias: lastEnterName === node.name}"
           :transform="`translate(${[node.x0, node.y0]})`">
           <rect
             :height="node.y1 - node.y0"
@@ -118,7 +118,7 @@
             @touchstart.stop="onTouchStart($event, node)"
             @touchend="onTouchEnd($event, node)"
             @mousedown.stop.prevent="onMouseDown($event, node)"
-            @mouseup.stop.prevent="onMouseUp(node)" />
+            @mouseup.stop.prevent="onMouseUp(node)"/>
           <text
             :y="(node.y1 - node.y0) / 2"
             dy=".35em"
@@ -133,12 +133,13 @@
                 fontSize: part.secondary ? '18px' : part.post ? '20px' : null,
               }"
               :baseline-shift="part.secondary ? 6.3 : (part.pre ? -0.6 : (part.post ? 4 : null))"
-              v-text="part.text" />
+              v-text="part.text"/>
           </text>
           <g
             v-for="(alt, index) in node.alts"
             :key="alt"
             class="alt"
+            :class="{'alt-long': alt.length > 3}"
             :transform="`translate(${node.altsTranslate[index]})`">
             <circle
               r="18"
@@ -147,7 +148,7 @@
               @touchstart.stop="onTouchStart($event, {node, alt})"
               @touchend="onTouchEnd($event, {node, alt})"
               @mousedown.stop.prevent="onMouseDown($event, {node, alt})"
-              @mouseup.stop.prevent="onMouseUp({node, alt})" />
+              @mouseup.stop.prevent="onMouseUp({node, alt})"/>
             <text
               dy=".35em"
               text-anchor="middle">
@@ -163,7 +164,7 @@
         height="100"
         width="100"
         xlink:href="#ripply-scott"
-        style="pointer-events: none;" />
+        style="pointer-events: none;"/>
     </g>
   </svg>
 </template>
@@ -222,6 +223,11 @@ export default {
       lastPlayed: null,
       highlight: false,
       lazyDraw: debounce(this.draw, 600)
+    }
+  },
+  computed: {
+    lastEnterName () {
+      return this.lastEnter && this.lastEnter.name
     }
   },
   watch: {
@@ -425,6 +431,10 @@ export default {
   font-size: 14px;
 }
 
+.alt.alt-long text {
+  font-size: 11px;
+}
+
 .dark .alt circle {
   fill: #fff;
   fill-opacity: 0.8;
@@ -457,6 +467,27 @@ export default {
   to {
     stroke-dashoffset: 13;
   }
+}
+
+@keyframes selection-7 {
+  from {
+    stroke-dashoffset: 0;
+  }
+
+  to {
+    stroke-dashoffset: 13;
+  }
+}
+
+.node.alias:not(.active) rect {
+  stroke: #000 !important;
+  stroke-dasharray: 1 6;
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  fill-opacity: 0.3 !important;
+  opacity: 1 !important;
+  animation: selection-7 1.2s linear infinite;
 }
 
 .node.active rect {

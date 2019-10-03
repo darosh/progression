@@ -2,17 +2,17 @@ export default {
   map: {
     1: { name: 'im', alt: '2,sus', links: [], group: 0 },
     2: { name: 'V', alt: '7,b9,b13,sus', links: [1], group: 1 },
-    3: { name: 'bII/4', links: [2, 16, 12, 10], group: 1 },
+    3: { name: 'bII/4', links: [2, 16, 12, 10], group: 4 },
     4: { name: 'ivm', alt: 'm6,m7,m9', links: [2, 1], group: 1 },
-    5: { name: 'im/b3', links: [3, 14], group: 1 },
+    5: { name: 'im/b3', links: [3, 14], group: 4 },
     6: { name: 'bIII+', links: [4, 1], group: 1 },
-    7: { name: 'viio/2', links: [5, 15], group: 1 },
+    7: { name: 'viio/2', links: [5, 15], group: 4 },
     8: { name: 'iio', links: [6], group: 1 },
-    9: { name: 'ivm/1', links: [1], group: 1 },
-    10: { name: 'im/5', links: [2], group: 1 },
-    11: { name: 'viio/2', links: [10], group: 1 },
+    9: { name: 'ivm/1', links: [1], group: 4 },
+    10: { name: 'im/5', links: [2], group: 4 },
+    11: { name: 'viio/2', links: [10], group: 4 },
     12: { name: 'iio', links: [2, 27], group: 1 },
-    13: { name: 'ivm/6', alt: 'm6/b6,m7/b6', links: [11], group: 1 },
+    13: { name: 'ivm/6', alt: 'm6/b6,m7/b6', links: [11], group: 4 },
     14: { name: 'bVI', alt: '6,M7', links: [3, 12], group: 1 },
     15: { name: 'V', alt: '7,b9,b13,sus', links: [5, 13, 14], group: 1 },
     16: { name: 'im/b3', links: [12], group: 4 },
@@ -35,7 +35,7 @@ export default {
     33: { name: 'II', alt: '7,b9', links: [15], group: 2 },
     34: { name: 'viø', links: [33], group: 2 },
     35: { name: '#ivo7', links: [15], group: 2 },
-    36: { name: 'V/1', links: [1], group: 1 }
+    36: { name: 'V/1', links: [1], group: 4 }
   },
   joints: [
     [8, 7],
