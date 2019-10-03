@@ -96,14 +96,28 @@
             </v-card>
             <v-list v-else>
               <v-list-item @click="midiOutput = null">
-                None
+                <v-list-item-title>
+                  None
+                </v-list-item-title>
+                <v-list-item-action>
+                  <v-icon v-if="midiOutput === null">
+                    mdi-check
+                  </v-icon>
+                </v-list-item-action>
               </v-list-item>
               <v-divider />
               <v-list-item
                 v-for="(output, key) in midiStatus.outputs"
                 :key="key"
                 @click="midiOutput = output">
-                {{ output.name }}
+                <v-list-item-title>
+                  {{ output.name }}
+                </v-list-item-title>
+                <v-list-item-action>
+                  <v-icon v-if="midiOutput === output">
+                    mdi-check
+                  </v-icon>
+                </v-list-item-action>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -139,12 +153,13 @@
             <sankey
               v-if="!!graph"
               :graph="graph"
-              :margin="isFull ? { top: 48, right: 48, bottom: 48, left: 48 } : undefined"
+              :margin="margin"
               class="d-block"
               :width="width"
               :height="height"
               :dark="$vuetify.theme.dark"
               :format="format()"
+              :node-width="nodeWidth"
               @enter="activate($event, true)"
               @leave="activate($event, false)"
               @attack="play"
@@ -221,6 +236,12 @@ export default {
     },
     height () {
       return this.isFull ? this.$vuetify.breakpoint.height : 720
+    },
+    margin () {
+      return this.isFull ? { top: 48, right: 48, bottom: 48, left: 48 } : { top: 32, right: 32, bottom: 32, left: 32 }
+    },
+    nodeWidth () {
+      return (this.width - this.margin.left - this.margin.right) / (12 * 1.44)
     }
   },
   watch: {

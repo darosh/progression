@@ -9,15 +9,15 @@
     @mouseup="onMouseUp(null)">
     <defs>
       <marker
-        id="head-marker"
+        id="end-marker"
         markerWidth="2"
         markerHeight="2"
         orient="auto"
         refY="0.8"
         refX="-0.4">
         <path
-          d="M0,0 L1.6,0.8 0,1.6"
-          fill-opacity="0.333" />
+          d="M0,0 L2,0.8 0,2"
+          fill-opacity="0.16" />
       </marker>
       <marker
         id="start-marker"
@@ -27,10 +27,10 @@
         refY="1"
         refX="2">
         <circle
-          r="0.6"
+          r="0.9"
           cx="1"
           cy="1"
-          fill-opacity="0.333" />
+          fill-opacity="0.16" />
       </marker>
       <radialGradient id="gradient">
         <stop
@@ -97,7 +97,7 @@
           class="link"
           :class="{active: link.active}"
           marker-start="url(#start-marker)"
-          marker-end="url(#head-marker)"
+          marker-end="url(#end-marker)"
           :d="path(link)"
           :style="{stroke: stroke(link.source.color)}" />
       </g>
@@ -322,7 +322,13 @@ export default {
       san(graph)
 
       for (const node of graph.nodes) {
-        const height = node.y1 - node.y0
+        let height = node.y1 - node.y0
+
+        if (height > (this.height - margin.top - margin.bottom - 48)) {
+          node.y1 -= 48
+          height = node.y1 - node.y0
+        }
+
         const vertical = (node.y1 - node.y0) > (node.alts.length * 36 - 18)
 
         if (vertical) {
