@@ -13,7 +13,8 @@
 - [x] Full screen
 - [ ] MIDI channel mapping (bass, mid, voice, pitch)
 - [ ] Inversions
-- [ ] Polyharmony (multitouch, piano preview)
+- [x] Polyharmony (multitouch)
+- [ ] Polyharmony (piano preview)
 - [ ] Touch / pen velocity
 - [ ] More charts / progressions / layouts / (simple based on features?)
 - [ ] Highlight T/D/S
