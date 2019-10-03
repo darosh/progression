@@ -33,6 +33,6 @@ export async function initMidi () {
     midiStatus.loading = false
   } catch (err) {
     midiStatus.fail = true
-    console.error(err)
+    // console.error(err)
   }
 }

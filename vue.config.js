@@ -5,6 +5,8 @@ const DEST = ((argv) => {
 
   if (i > -1) {
     return argv[i + 1]
+  } else {
+    return 'dist'
   }
 })(process.argv)
 
@@ -14,17 +16,22 @@ module.exports = {
     disableHostCheck: true
   },
   chainWebpack: config => {
+    if (process.env.VUE_CLI_MODERN_MODE && !process.env.VUE_CLI_MODERN_BUILD) {
+      return
+    }
+
     config
-      .plugin('copy')
-      .tap(args => [[args[0][0], {
-        ...args[0][0],
-        to: (DEST ? resolve(DEST) : args[0][0].to) + '/samples/piano/',
-        from: '*.mp3',
-        context: resolve('./node_modules/tonejs-instruments/samples/piano/'),
-        transformPath (p) {
-          console.log(p)
-          return p
-        }
-      }]])
+      .plugin('copy-samples')
+      .use('copy-webpack-plugin', [
+        [{
+          to: resolve(DEST) + '/samples/piano/',
+          from: '*.mp3',
+          context: resolve('./node_modules/tonejs-instruments/samples/piano/'),
+          transformPath (p) {
+            console.log(p)
+            return p
+          }
+        }]
+      ])
   }
 }
