@@ -9,15 +9,28 @@
 ## To do / Ideas
 
 - [x] MIDI output
-- [x] Full screen
 - [x] Bass notation
+- [x] Full screen
 - [ ] MIDI channel mapping (bass, mid, voice, pitch)
 - [ ] Inversions
 - [ ] Polyharmony (multitouch, piano preview)
 - [ ] Touch / pen velocity
 - [ ] More charts / progressions / layouts / (simple based on features?)
 - [ ] Highlight T/D/S
-- [ ] redesign node joints
+- [ ] Redesign node joints
+- [ ] PC keyboard support
+- [ ] Pad like layout
+- [ ] MDI input? For pads? For chord recognition?
+- [ ] Disable chart empty area long press
+- [ ] Make alts larger + more spacing (esp. on full screen)
+- [ ] Highlight synonyms
+- [ ] Do not dim at home 
+- [ ] Continuous multiple ripples 
+- [ ] Recent chords? 
+- [ ] Link shape from thick to thin? 
+- [ ] Optimize
+  - [ ] Latency
+  - [ ] More responsive full screen
 
 ## Project setup
 ```

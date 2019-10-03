@@ -125,7 +125,7 @@
             :x="nodeWidth / 2"
             style="font-size: 22px;">
             <tspan
-              v-for="(part, keyName) in format(node.name)"
+              v-for="(part, keyName) in format(node)"
               :key="keyName"
               :style="{
                 fontWeight: part.primary ? '700' : '500',
@@ -138,7 +138,7 @@
             v-for="(alt, index) in node.alts"
             :key="alt"
             class="alt"
-            :transform="`translate(${[nodeWidth, node.y1 - node.y0 - index * 24]})`">
+            :transform="`translate(${node.altsTranslate[index]})`">
             <circle
               r="18"
               :style="{fill: altColor(node.color)}"
@@ -193,7 +193,7 @@ export default {
     },
     format: {
       type: Function,
-      default: text => [{ text }]
+      default: ({ name }) => [{ text: name }]
     },
     simpleFormat: {
       type: Function,
@@ -206,18 +206,21 @@ export default {
     height: {
       type: Number,
       default: 720
+    },
+    margin: {
+      type: Object,
+      default: () => ({ top: 32, right: 32, bottom: 32, left: 32 })
     }
   },
   data () {
     return {
-      margin: { top: 32, right: 32, bottom: 32, left: 32 },
       path: null,
       lastNode: null,
       rippleColor: null,
       lastEnter: null,
       lastPlayed: null,
       highlight: false,
-      lazyDraw: debounce(this.draw, 50)
+      lazyDraw: debounce(this.draw, 600)
     }
   },
   watch: {
@@ -226,7 +229,8 @@ export default {
       immediate: true
     },
     width: 'lazyDraw',
-    height: 'lazyDraw'
+    height: 'lazyDraw',
+    margin: 'lazyDraw'
   },
   methods: {
     onEnter (node) {
@@ -293,7 +297,8 @@ export default {
       const san = sankey()
         .nodeWidth(this.nodeWidth)
         .nodePadding(12)
-        .nodeSort((b, a) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
+        // .nodeSort((b, a) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
+        // .nodeSort((a, b) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
         .iterations(iterations)
         .nodeAlign(sankeyCenter)
         .extent([[margin.left, margin.top], [width, height]])
@@ -301,6 +306,23 @@ export default {
       this.path = sankeyLinkHorizontal()
 
       san(graph)
+
+      for (const node of graph.nodes) {
+        const height = node.y1 - node.y0
+        const vertical = (node.y1 - node.y0) > (node.alts.length * 36 - 18)
+
+        if (vertical) {
+          node.altsTranslate = node.alts.map((alt, index) => [
+            this.nodeWidth,
+            height - index * (((height) > (node.alts.length * 36 - 18)) ? 36 : (height + 18) / node.alts.length)
+          ])
+        } else {
+          node.altsTranslate = node.alts.map((alt, index) => [
+            index * 36,
+            height
+          ])
+        }
+      }
     },
     async ripple (event, timing, node) {
       let x

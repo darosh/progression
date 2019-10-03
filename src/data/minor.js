@@ -15,7 +15,7 @@ export default {
     13: { name: 'ivm/b6', alt: 'm6/b6,m7/b6', links: [11], group: 1 },
     14: { name: 'bVI', alt: '6,M7', links: [3, 12], group: 1 },
     15: { name: 'V', alt: '7,b9,b13,sus', links: [5, 13, 14], group: 1 },
-    16: { name: 'im/b3', links: [12], group: 1 },
+    16: { name: 'im/b3', links: [12], group: 4 },
     17: { name: 'bVII', alt: '9', links: [1], group: 2 },
     18: { name: 'bVI', links: [17], group: 2 },
     19: { name: 'II', alt: '7,b9', links: [2], group: 2 },

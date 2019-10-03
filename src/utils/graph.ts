@@ -30,7 +30,7 @@ interface GraphLink {
 
 interface Dictionary<T> {[index: number]: T}
 
-export function expandMap (dic: Dictionary<GraphNodeSource>[], shapes: any) {
+export function expandMap (dic: Dictionary<GraphNodeSource>, shapes: any) {
   const copy: Dictionary<GraphNode> = {};
 
   (<[number, GraphNode][]><unknown>Object.entries(dic)).forEach(([id, o]) => {
@@ -46,16 +46,8 @@ export function expandMap (dic: Dictionary<GraphNodeSource>[], shapes: any) {
     obj.alts = !obj.alt ? [] : obj.alt.split(',')
     obj.color = shapes[obj.group][0]
     obj.radius = shapes[obj.group][4]
-    obj.parents = obj.parents || []
 
-    obj.parents.push(...obj.links.map(lid => {
-      const parent = <GraphNode><unknown>copy[lid]
-
-      parent.children = parent.children || []
-      parent.children.push(obj)
-
-      return parent
-    }))
+    linkObjects(obj.links, copy, obj)
   })
 
   return {
@@ -64,7 +56,7 @@ export function expandMap (dic: Dictionary<GraphNodeSource>[], shapes: any) {
   }
 }
 
-function removeObject (object: GraphNode, array: GraphNode[]) {
+function removeObject (object: GraphNode, array: GraphNode[], deep = true) {
   const index = array.indexOf(object)
 
   if (index === -1) {
@@ -74,17 +66,21 @@ function removeObject (object: GraphNode, array: GraphNode[]) {
   object.removed = true
   array.splice(index, 1)
 
+  if (!deep) {
+    return
+  }
+
   if (object.children) {
     object.children.forEach(child => {
       if (child.parents) {
-        removeObject(object, child.parents)
+        removeObject(object, child.parents, false)
       }
     })
   }
   if (object.parents) {
     object.parents.forEach(parent => {
       if (parent.children) {
-        removeObject(object, parent.children)
+        removeObject(object, parent.children, false)
       }
     })
   }
@@ -134,7 +130,7 @@ function hasParents (obj: GraphNode) {
 
 export function toSankeyLinks (array: GraphNode[]) {
   return array.reduce((acc: GraphLink[], source: GraphNode) => {
-    acc.push(...(source.parents || []).map(target => ({ source, target, value: 1 })))
+    acc.push(...(source.parents || []).map(target => ({ source, target, value: Math.max(4, source.alts.length + target.alts.length) || 3 })))
     return acc
   }, [])
 }
@@ -167,7 +163,13 @@ export function canMergeGroup (array: GraphNode[]): boolean {
 }
 
 function getParents (obj: GraphNode, parents: any): boolean {
-  for (const parent of (obj.children || [])) {
+  parents[obj.id] = true
+
+  if (!obj.children) {
+    return false
+  }
+
+  for (const parent of obj.children) {
     const id = parent.id
 
     if (parents[id]) {
@@ -175,7 +177,9 @@ function getParents (obj: GraphNode, parents: any): boolean {
     } else {
       parents[id] = true
 
-      return getParents(parent, parents)
+      if (getParents(parent, parents)) {
+        return true
+      }
     }
   }
 
@@ -187,30 +191,29 @@ export function mergeGroups (groups: GraphNode[][], array: GraphNode[]) {
 }
 
 function mergeGroup (group: GraphNode[], array: GraphNode[]) {
+  const dic = array.reduce((acc, o) => {
+    acc[o.id] = o
+    return acc
+  }, <Dictionary<GraphNode>>{})
+
   const root = group[0]
 
   for (let i = 1; i < group.length; i++) {
     const obj = group[i]
     removeObject(obj, array)
 
-    root.children = root.children || []
-    insertMissing(root.children, obj.children || [], root)
-    root.parents = root.parents || []
-    insertMissing(root.parents, obj.parents || [], root)
+    const links = obj.parents.map(({ id }) => id)
+    linkObjects(links, dic, root)
+
+    for (const child of obj.children || []) {
+      linkObjects([root.id], dic, child)
+    }
   }
 
   removeOrphans(array)
 }
 
-function insertMissing (to: GraphNode[], from: GraphNode[], root: GraphNode) {
-  for (const obj of from) {
-    if (!to.includes(obj) && (obj !== root)) {
-      to.push(obj)
-    }
-  }
-}
-
-export function normalize (data: any, shapes: any, useJoints = false) {
+export function normalize (data: { map: Dictionary<GraphNodeSource>, joints: number[][] }, shapes: any, useJoints = false, mergeJointLinks = true) {
   if (useJoints && data.joints) {
     const { dic, values } = expandMap(data.map, shapes)
 
@@ -234,9 +237,49 @@ export function normalize (data: any, shapes: any, useJoints = false) {
     }
 
     return values
+  } else if (mergeJointLinks && data.joints) {
+    const { dic, values } = expandMap(data.map, shapes)
+
+    for (const joint of data.joints) {
+      for (const fromNode of joint) {
+        for (const toNode of joint) {
+          if (fromNode === toNode) {
+            continue
+          }
+
+          const f = dic[fromNode]
+          const t = dic[toNode]
+          linkObjects(f.links, dic, t)
+
+          for (const childF of f.children || []) {
+            linkObjects([toNode], dic, childF)
+          }
+        }
+      }
+    }
+
+    return values
   } else {
     return expandMap(data.map, shapes).values
   }
+}
+
+function linkObjects (links: number[], copy: Dictionary<GraphNode>, obj: GraphNode) {
+  obj.parents = obj.parents || []
+
+  links.forEach(lid => {
+    const parent = copy[lid]
+
+    if (!obj.parents.includes(parent)) {
+      parent.children = parent.children || []
+
+      if (!parent.children.includes(obj)) {
+        parent.children.push(obj)
+      }
+
+      obj.parents.push(parent)
+    }
+  })
 }
 
 function redirect (from: any, to: any, array: any[]) {

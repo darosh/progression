@@ -133,11 +133,13 @@
           justify="center">
           <v-card
             ref="chart"
+            :color="$vuetify.theme.dark && isFull ? 'grey darken-4' : null"
             style="border-radius: 24px; overflow-x: auto;"
             elevation="1">
             <sankey
               v-if="!!graph"
               :graph="graph"
+              :margin="isFull ? { top: 48, right: 48, bottom: 48, left: 48 } : undefined"
               class="d-block"
               :width="width"
               :height="height"
@@ -231,14 +233,22 @@ export default {
       this.$vuetify.theme.dark = value === 0
     }
   },
+  created () {
+    document.addEventListener('fullscreenchange', this.fullChanged)
+  },
+  beforeDestroy () {
+    document.removeEventListener('fullscreenchange', this.fullChanged)
+  },
   methods: {
     activate,
     initMidi,
     format () {
+      // return ({ id }) => ([{ text: id }])
+
       if (this.roman === 0) {
-        return formatRoman
+        return ({ name }) => formatRoman(name)
       } else {
-        return name => transposeFormatTransposed(name, this.baseNote)
+        return ({ name }) => transposeFormatTransposed(name, this.baseNote)
       }
     },
     draw () {
@@ -246,6 +256,7 @@ export default {
       // const list = normalize(blues12, groups)
       const list = normalize(this.type ? minor : major, groups, false)
       // removeSlashes(list)
+
       const bgr = toBeGrouped(groupByNameAlt(list))
       mergeGroups(bgr, list)
 
@@ -286,6 +297,11 @@ export default {
           document.exitFullscreen()
           this.isFull = false
         }
+      }
+    },
+    fullChanged () {
+      if (!document.fullscreenElement) {
+        this.isFull = false
       }
     }
   }

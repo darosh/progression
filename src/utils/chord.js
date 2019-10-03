@@ -43,7 +43,7 @@ export function parseBass (chordType) {
   }
 
   if (bass) {
-    parsedBass = parseInt(bass)
+    parsedBass = parseInt(parsedBass || bass)
   }
 
   return { type, bass: parsedBass, acc }
