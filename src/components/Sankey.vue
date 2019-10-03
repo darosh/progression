@@ -4,6 +4,7 @@
     :width="width"
     :height="height"
     :class="{dark: dark, highlight: highlight}"
+    @touchstart="onGlobalTouch"
     @touchend="onGlobalTouch"
     @mousedown="highlight = false"
     @mouseup="onMouseUp(null)">
@@ -109,6 +110,7 @@
           :class="{active: node.active, alias: lastEnterName === node.name}"
           :transform="`translate(${[node.x0, node.y0]})`">
           <rect
+            :data-cid="node.id"
             :height="node.y1 - node.y0"
             :width="nodeWidth"
             :rx="node.radius"

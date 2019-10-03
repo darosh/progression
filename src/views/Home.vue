@@ -165,7 +165,7 @@
           </v-btn>
           <span class="title ml-5">Progression</span>
           <v-spacer />
-          <v-row style="position: relative;">
+          <v-row style="position: relative;" class="mx-1">
             <v-spacer />
             <v-flex />
             <keyboard
@@ -174,16 +174,16 @@
               :start="36"
               :length="61"
               no-gutters
-              class="ml-3 d-block" />
+              class="d-block" />
             <div
               v-if="playStatus.loading"
-              style="position: absolute; top: 0px; right: 0; opacity: 0.87">
+              style="position: absolute; top: 0; right: 0; opacity: 0.87">
               <v-progress-circular
                 indeterminate
                 :size="48-3"
                 :width="6"
                 color="rgb(0, 255, 68)"
-                class="ml-3 mr-2" />
+                class="mr-2" />
               <i>Loading sounds...</i>
             </div>
           </v-row>
@@ -277,7 +277,7 @@
                 :width="6"
                 color="rgb(0, 255, 68)"
                 class="mr-2" />
-              <i>Loading MIDI outputs...</i>
+              <i>Waiting for MIDI...</i>
             </v-card>
             <v-list v-else>
               <v-list-item @click="midiOutput = null">

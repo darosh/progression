@@ -29,6 +29,7 @@
 - [ ] Continuous multiple ripples 
 - [ ] Recent chords? 
 - [ ] Link shape from thick to thin? 
+- [ ] Touch/mouse end should try cancel chord based on original el  
 - [ ] Optimize
   - [ ] Latency
   - [ ] More responsive full screen
