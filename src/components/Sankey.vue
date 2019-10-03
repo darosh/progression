@@ -284,8 +284,9 @@ export default {
       this.$emit('attack', node)
     },
     onMouseUp (node) {
-      if (node) {
+      if (node && this.lastPlayed.includes(node)) {
         this.$emit('release', node)
+        this.lastPlayed.splice(this.lastPlayed.indexOf(node), 1)
       } else if (this.lastPlayed.length) {
         this.$emit('release', this.lastPlayed.shift())
       }
