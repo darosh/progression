@@ -24,7 +24,8 @@ export default {
     22: { name: 'I', alt: '7,b9', links: [4], group: 2 },
     23: { name: 'Vo7', alt: 'ø', links: [22], group: 2 },
     24: { name: 'iiio7', links: [4], group: 2 },
-    25: { name: 'V', alt: '7,b9', links: [6], group: 2 },
+    // Same as 15
+    // 25: { name: 'V', alt: '7,b9', links: [6], group: 2 },
     26: { name: 'iio7', links: [6], group: 2 },
     27: { name: 'ivm7', links: [1], group: 2 },
     28: { name: '#ivo7', links: [10], group: 2 },
