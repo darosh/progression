@@ -118,7 +118,7 @@
                   </v-icon>
                 </v-list-item-action>
               </v-list-item>
-              <v-divider />
+              <v-divider v-if="midiStatus.outputs && midiStatus.outputs.length" />
               <v-list-item
                 v-for="(output, key) in midiStatus.outputs"
                 :key="key"
@@ -141,7 +141,7 @@
         no-gutters
         justify="center"
         align="center"
-        class="pt-5"
+        class="py-5"
         style="opacity: 0.6">
         <span class="mx-3">
           Made in Brno, 2019, <a href="https://github.com/darosh/progression">GitHub</a>
@@ -381,7 +381,7 @@ import { groups } from '../data/groups'
 import { removeSlashes, toSankey, toBeGrouped, mergeGroups, groupByNameAlt, normalize, activate } from '../utils/graph'
 import { formatRoman, transposeFormatTransposed } from '../utils/format'
 import { parseChord } from '../utils/chord'
-import { initMidi, midiStatus } from '../utils/midi'
+import { initMidi, midiStatus, play as playMidi } from '../utils/midi'
 import { play, playStatus } from '../utils/play'
 
 export default {
@@ -474,11 +474,7 @@ export default {
       }
 
       if (this.midiOutput) {
-        if (release) {
-          this.midiOutput.stopNote(this.piano)
-        } else {
-          this.midiOutput.playNote(this.piano)
-        }
+        playMidi(this.midiOutput, midi, release)
       } else {
         play(notes, release)
       }
