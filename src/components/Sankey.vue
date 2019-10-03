@@ -490,6 +490,10 @@ export default {
   animation: selection-7 1.2s linear infinite;
 }
 
+.dark .node.alias:not(.active) rect {
+  stroke: #fff !important;
+}
+
 .node.active rect {
   stroke: #000 !important;
   stroke-dasharray: 8 5;
