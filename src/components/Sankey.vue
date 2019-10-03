@@ -116,7 +116,7 @@
             :style="{fill: node.color, stroke: stroke(node.color)}"
             @mouseenter="onEnter(node)"
             @touchstart.stop="onTouchStart($event, node)"
-            @touchend="onTouchEnd($event, node)"
+            @touchend.stop="onTouchEnd($event, node)"
             @mousedown.stop.prevent="onMouseDown($event, node)"
             @mouseup.stop.prevent="onMouseUp(node)" />
           <text
@@ -146,7 +146,7 @@
               :style="{fill: altColor(node.color)}"
               @mouseenter="onEnter(node)"
               @touchstart.stop="onTouchStart($event, {node, alt})"
-              @touchend="onTouchEnd($event, {node, alt})"
+              @touchend.stop="onTouchEnd($event, {node, alt})"
               @mousedown.stop.prevent="onMouseDown($event, {node, alt})"
               @mouseup.stop.prevent="onMouseUp({node, alt})" />
             <text
