@@ -4,6 +4,7 @@
     :width="width"
     :height="height"
     :class="{dark: dark, highlight: highlight}"
+    @touchstart="onGlobalTouch"
     @mousedown="highlight = false"
     @mouseup="onMouseUp(null)">
     <defs>
@@ -114,7 +115,7 @@
             :ry="node.radius"
             :style="{fill: node.color, stroke: stroke(node.color)}"
             @mouseenter="onEnter(node)"
-            @touchstart="onTouchStart($event, node)"
+            @touchstart.stop="onTouchStart($event, node)"
             @touchend="onTouchEnd($event, node)"
             @mousedown.stop.prevent="onMouseDown($event, node)"
             @mouseup.stop.prevent="onMouseUp(node)" />
@@ -143,7 +144,7 @@
               r="18"
               :style="{fill: altColor(node.color)}"
               @mouseenter="onEnter(node)"
-              @touchstart="onTouchStart($event, {node, alt})"
+              @touchstart.stop="onTouchStart($event, {node, alt})"
               @touchend="onTouchEnd($event, {node, alt})"
               @mousedown.stop.prevent="onMouseDown($event, {node, alt})"
               @mouseup.stop.prevent="onMouseUp({node, alt})" />
@@ -247,6 +248,13 @@ export default {
       if (node) {
         this.$emit('enter', node)
       }
+    },
+    onGlobalTouch (event) {
+      if (event.cancelable) {
+        event.preventDefault()
+      }
+
+      this.highlight = false
     },
     onTouchStart (event, node) {
       if (event.cancelable) {
