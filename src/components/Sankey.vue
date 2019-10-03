@@ -4,10 +4,10 @@
     :width="width"
     :height="height"
     :class="{dark: dark, highlight: highlight}"
-    @touchstart="onGlobalTouch"
-    @touchend="onGlobalTouch"
-    @mousedown="highlight = false"
-    @mouseup="onMouseUp(null)">
+    @touchstart.stop="onGlobalTouch"
+    @touchend.stop="onGlobalTouch"
+    @mousedown.stop="highlight = false"
+    @mouseup.stop="onMouseUp($event, null)">
     <defs>
       <marker
         id="end-marker"
@@ -117,10 +117,10 @@
             :ry="node.radius"
             :style="{fill: node.color, stroke: stroke(node.color)}"
             @mouseenter="onEnter(node)"
-            @touchstart.stop="onTouchStart($event, node)"
-            @touchend.stop="onTouchEnd($event, node)"
-            @mousedown.stop.prevent="onMouseDown($event, node)"
-            @mouseup.stop.prevent="onMouseUp(node)" />
+            @touchstart.stop="onTouchStart($event, {node})"
+            @touchend.stop="onTouchEnd($event, {node})"
+            @mousedown.stop.prevent="onMouseDown($event, {node})"
+            @mouseup.stop.prevent="onMouseUp($event, {node})" />
           <text
             :y="(node.y1 - node.y0) / 2"
             dy=".35em"
@@ -145,12 +145,13 @@
             :transform="`translate(${node.altsTranslate[index]})`">
             <circle
               r="18"
+              :data-aid="alt"
               :style="{fill: altColor(node.color)}"
               @mouseenter="onEnter(node)"
               @touchstart.stop="onTouchStart($event, {node, alt})"
               @touchend.stop="onTouchEnd($event, {node, alt})"
               @mousedown.stop.prevent="onMouseDown($event, {node, alt})"
-              @mouseup.stop.prevent="onMouseUp({node, alt})" />
+              @mouseup.stop.prevent="onMouseUp($event, {node, alt})" />
             <text
               dy=".35em"
               text-anchor="middle">
@@ -271,7 +272,7 @@ export default {
         event.preventDefault()
       }
 
-      this.onMouseDown(event, node)
+      this.onMouseDown(event, node, false)
       this.onEnter(node.node || node)
     },
     onTouchEnd (event, node) {
@@ -279,18 +280,29 @@ export default {
         event.preventDefault()
       }
 
-      this.onMouseUp(node)
+      this.onMouseUp(event, node, false)
     },
-    onMouseDown (event, node) {
+    onMouseDown (event, node, mouse = true) {
       this.highlight = true
-      this.ripple(event, 1, node.node || node)
+      this.ripple(event, 1, node.node)
       this.lastPlayed.push(node)
       this.$emit('attack', node)
     },
-    onMouseUp (node) {
-      if (node && this.lastPlayed.includes(node)) {
+    onMouseUp (event, node, mouse = true) {
+      if (!mouse) {
+        const id = event.target.getAttribute('data-cid')
+        const aid = event.target.getAttribute('data-aid') || undefined
+
+        if (id) {
+          node = this.lastPlayed.find(({ node, alt }) => node.id === id && alt === aid) || node
+        }
+      }
+
+      const lp = node && this.lastPlayed.find(obj => obj.node === node.node)
+
+      if (lp) {
         this.$emit('release', node)
-        this.lastPlayed.splice(this.lastPlayed.indexOf(node), 1)
+        this.lastPlayed.splice(this.lastPlayed.indexOf(lp), 1)
       } else if (this.lastPlayed.length) {
         this.$emit('release', this.lastPlayed.shift())
       }

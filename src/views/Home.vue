@@ -165,7 +165,9 @@
           </v-btn>
           <span class="title ml-5">Progression</span>
           <v-spacer />
-          <v-row style="position: relative;" class="mx-1">
+          <v-row
+            style="position: relative;"
+            class="mx-1">
             <v-spacer />
             <v-flex />
             <keyboard
@@ -465,7 +467,7 @@ export default {
       this.graph.nodes.forEach(object => { object.romanChord = romanNumeral(object.name) })
     },
     async play (object, release = false) {
-      const romanChord = object.romanChord || { ...object.node.romanChord, chordType: object.alt }
+      const romanChord = object.romanChord || { ...object.node.romanChord, chordType: object.alt || '' }
       // const id = [object.id || object.node.id, romanChord.roman, romanChord.chordType || '*', this.baseNote].join('_')
       const { midi, notes } = parseChord(romanChord, this.baseNote)
 
