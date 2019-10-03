@@ -51,6 +51,7 @@ export function parseBass (chordType) {
 
 function normalizeChordType (type) {
   return type
+    .replace('sus', 'sus4')
     .replace('b9', '7b9')
     .replace('b13', '9b13')
     .replace('M9', 'maj9')

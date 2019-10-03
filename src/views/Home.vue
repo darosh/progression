@@ -466,8 +466,8 @@ export default {
       this.graph = toSankey(list)
       this.graph.nodes.forEach(object => { object.romanChord = romanNumeral(object.name) })
     },
-    async play (object, release = false) {
-      const romanChord = object.romanChord || { ...object.node.romanChord, chordType: object.alt || '' }
+    async play ({ node, alt }, release = false) {
+      const romanChord = alt ? { ...node.romanChord, chordType: alt } : node.romanChord
       // const id = [object.id || object.node.id, romanChord.roman, romanChord.chordType || '*', this.baseNote].join('_')
       const { midi, notes } = parseChord(romanChord, this.baseNote)
 
