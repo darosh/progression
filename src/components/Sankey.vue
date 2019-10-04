@@ -114,13 +114,13 @@
             dy=".35em"
             text-anchor="middle"
             :x="nodeWidth / 2"
-            style="font-size: 22px;">
+            :font-size="altRadius">
             <tspan
               v-for="(part, keyName) in format(node)"
               :key="keyName"
+              :font-size="part.secondary ? altRadius - 4 : part.post ? altRadius - 2 : null"
               :style="{
-                fontWeight: part.primary ? '700' : '500',
-                fontSize: part.secondary ? '18px' : part.post ? '20px' : null,
+                fontWeight: part.primary ? '700' : '500'
               }"
               :baseline-shift="part.secondary ? 6.3 : (part.pre ? -0.6 : (part.post ? 4 : null))"
               v-text="part.text" />
@@ -320,7 +320,7 @@ export default {
       const width = this.width - margin.right
       const height = this.height - margin.bottom
 
-      this.altRadius = Math.floor(height / 320) * 9
+      this.altRadius = Math.floor(this.nodeSize / 32) * 9
 
       const san = sankey()
         .nodeWidth(this.nodeWidth)
