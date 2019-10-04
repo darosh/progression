@@ -35,40 +35,28 @@
       </marker>
       <radialGradient id="gradient">
         <stop
-          offset="0.10"
+          :offset="0"
           stop-color="transparent" />
+        <template v-for="(s, key) in [1, 3, 5, 7].map(d => d / 8)">
+          <stop
+            :key="`${key}a`"
+            :offset="s - 0.03"
+            stop-color="transparent" />
+          <stop
+            :key="`${key}b`"
+            :offset="s - 0.029"
+            :stop-color="rippleColor" />
+          <stop
+            :key="`${key}c`"
+            :offset="s + 0.029"
+            :stop-color="rippleColor" />
+          <stop
+            :key="`${key}d`"
+            :offset="s + 0.03"
+            stop-color="transparent" />
+        </template>
         <stop
-          offset="0.11"
-          :stop-color="rippleColor" />
-        <stop
-          offset="0.18"
-          :stop-color="rippleColor" />
-        <stop
-          offset="0.19"
-          stop-color="transparent" />
-        <stop
-          offset="0.30"
-          stop-color="transparent" />
-        <stop
-          offset="0.31"
-          :stop-color="rippleColor" />
-        <stop
-          offset="0.38"
-          :stop-color="rippleColor" />
-        <stop
-          offset="0.39"
-          stop-color="transparent" />
-        <stop
-          offset="0.50"
-          stop-color="transparent" />
-        <stop
-          offset="0.51"
-          :stop-color="rippleColor" />
-        <stop
-          offset="0.58"
-          :stop-color="rippleColor" />
-        <stop
-          offset="0.59"
+          :offset="1"
           stop-color="transparent" />
       </radialGradient>
       <symbol
@@ -88,8 +76,8 @@
           :height="lastNode.y1 - lastNode.y0"
           :width="nodeWidth"
           :transform="`translate(${[lastNode.x0, lastNode.y0]})`"
-          :rx="lastNode.radius"
-          :ry="lastNode.radius" />
+          :rx="radius(lastNode)"
+          :ry="radius(lastNode)" />
       </clipPath>
       <g>
         <path
@@ -113,8 +101,8 @@
             :data-cid="node.id"
             :height="node.y1 - node.y0"
             :width="nodeWidth"
-            :rx="Math.min(nodeWidth / 2, node.radius < 1 ? node.radius * nodeWidth : node.radius)"
-            :ry="Math.min(nodeWidth / 2, node.radius < 1 ? node.radius * nodeWidth : node.radius)"
+            :rx="radius(node)"
+            :ry="radius(node)"
             :style="{fill: node.color, stroke: stroke(node.color)}"
             @mouseenter="onEnter(node)"
             @touchstart.stop="onTouchStart($event, {node})"
@@ -141,10 +129,9 @@
             v-for="(alt, index) in node.alts"
             :key="alt"
             class="alt"
-            :class="{'alt-long': alt.length > 3}"
             :transform="`translate(${node.altsTranslate[index]})`">
             <circle
-              r="18"
+              :r="altRadius"
               :data-aid="alt"
               :style="{fill: altColor(node.color)}"
               @mouseenter="onEnter(node)"
@@ -154,6 +141,7 @@
               @mouseup.stop.prevent="onMouseUp($event, {node, alt})" />
             <text
               dy=".35em"
+              :font-size="alt.length > 3 ? Math.floor(altRadius * 0.7) - 2 : Math.floor(altRadius * 0.8)"
               text-anchor="middle">
               {{ simpleFormat(alt) }}
             </text>
@@ -220,6 +208,7 @@ export default {
   data () {
     return {
       nodeWidth: this.nodeSize,
+      altRadius: 22,
       path: null,
       lastNode: null,
       rippleColor: null,
@@ -284,7 +273,7 @@ export default {
     },
     onMouseDown (event, node, mouse = true) {
       this.highlight = true
-      this.ripple(event, 1, node.node)
+      this.ripple(event, 1, node.node, mouse)
       this.lastPlayed.push(node)
       this.$emit('attack', node)
     },
@@ -315,6 +304,11 @@ export default {
         ? d3.color(d3.interpolateCubehelix(d3.rgb(color), '#fff')(0.66)).darker(0.11)
         : d3.color(d3.interpolateCubehelix(d3.rgb(color), '#000')(0.33)).darker(0.33)
     },
+    radius ({ radius }) {
+      const { nodeWidth } = this
+
+      return Math.min(nodeWidth / 2, radius < 1 ? radius * nodeWidth : radius)
+    },
     draw () {
       if (!this.graph) {
         return
@@ -325,6 +319,8 @@ export default {
       const { margin, graph, iterations } = this
       const width = this.width - margin.right
       const height = this.height - margin.bottom
+
+      this.altRadius = Math.floor(height / 320) * 9
 
       const san = sankey()
         .nodeWidth(this.nodeWidth)
@@ -339,6 +335,8 @@ export default {
 
       san(graph)
 
+      const { altRadius } = this
+
       for (const node of graph.nodes) {
         let height = node.y1 - node.y0
 
@@ -347,22 +345,22 @@ export default {
           height = node.y1 - node.y0
         }
 
-        const vertical = (node.y1 - node.y0) > (node.alts.length * 36 - 18)
+        const vertical = (node.y1 - node.y0) > (node.alts.length * altRadius * 2 - altRadius)
 
         if (vertical) {
           node.altsTranslate = node.alts.map((alt, index) => [
             this.nodeWidth,
-            height - index * (((height) > (node.alts.length * 36 - 18)) ? 36 : (height + 18) / node.alts.length)
+            height - index * (((height) > (node.alts.length * altRadius * 2 - altRadius)) ? altRadius * 2 : (height + altRadius) / node.alts.length)
           ])
         } else {
           node.altsTranslate = node.alts.map((alt, index) => [
-            index * 36,
+            index * altRadius * 2,
             height
           ])
         }
       }
     },
-    async ripple (event, timing, node) {
+    async ripple (event, timing, node, mouse) {
       let x
       let y
 
@@ -387,7 +385,7 @@ export default {
         opacity: 0.87,
         ease: Linear.easeOut
       }, {
-        scale: 96,
+        scale: 120,
         opacity: 0
       })
     }
@@ -452,11 +450,6 @@ export default {
   fill: #fff;
   pointer-events: none;
   user-select: none;
-  font-size: 14px;
-}
-
-.alt.alt-long text {
-  font-size: 11px;
 }
 
 .dark .alt circle {
