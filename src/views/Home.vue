@@ -203,6 +203,7 @@
                 v-if="!!graph"
                 :graph="graph"
                 :margin="margin"
+                :animate="visible"
                 class="d-block"
                 :width="width"
                 :height="height"
@@ -251,6 +252,7 @@ export default {
   components: { Sankey, Keyboard },
   data: () => ({
     showMenu: true,
+    visible: true,
     type: 0,
     dark: null,
     acc: 0,
@@ -295,13 +297,18 @@ export default {
   },
   created () {
     document.addEventListener('fullscreenchange', this.fullChanged)
+    window.addEventListener('visibilitychange', this.onVisibility)
   },
   beforeDestroy () {
     document.removeEventListener('fullscreenchange', this.fullChanged)
+    window.removeEventListener('visibilitychange', this.onVisibility)
   },
   methods: {
     activate,
     initMidi,
+    onVisibility () {
+      this.visible = document.visibilityState === 'visible'
+    },
     format () {
       // return ({ id }) => ([{ text: id }])
 

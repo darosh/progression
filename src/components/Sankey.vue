@@ -3,7 +3,7 @@
     ref="chart"
     :width="width"
     :height="height"
-    :class="{dark: dark, highlight: highlight}"
+    :class="{dark: dark, highlight: highlight, pause: !animate}"
     @touchstart.stop="onGlobalTouch"
     @touchend.stop="onGlobalTouch"
     @mousedown.stop="highlight = false"
@@ -203,6 +203,10 @@ export default {
     margin: {
       type: Object,
       default: () => ({ top: 32, right: 32, bottom: 32, left: 32 })
+    },
+    animate: {
+      type: Boolean,
+      default: true
     }
   },
   data () {
@@ -507,6 +511,10 @@ export default {
   animation: selection-7 1.2s linear infinite;
 }
 
+.pause .node.alias:not(.active) rect {
+  animation-play-state: paused !important;
+}
+
 .dark .node.alias:not(.active) rect {
   stroke: #fff !important;
 }
@@ -518,6 +526,10 @@ export default {
   stroke-linejoin: round;
   stroke-linecap: round;
   animation: selection-13 0.4s linear infinite reverse;
+}
+
+.pause .node.active rect {
+  animation-play-state: paused !important;
 }
 
 .dark .node.active rect {
@@ -532,6 +544,10 @@ path.link.active {
   stroke-linejoin: round;
   stroke-linecap: round;
   animation: selection-8 0.6s linear infinite reverse;
+}
+
+.pause path.link.active {
+  animation-play-state: paused !important;
 }
 
 .dark path.link.active {
