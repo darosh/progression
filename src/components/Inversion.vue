@@ -2,7 +2,7 @@
   <g
     ref="root"
     :class="{dark: dark}"
-    @touchmove="onMove">
+    @touchmove.stop="onMove">
     <g
       v-for="({value: v, text}, index) in inversions.slice().reverse()"
       :key="v"
