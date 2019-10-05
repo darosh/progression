@@ -1,6 +1,6 @@
 # Progression
 
-> Interactive chord progression map based on [mugglinworks.com](http://mugglinworks.com/chordmaps/)
+> Interactive chord progression maps Web MIDI app based on [mugglinworks.com](http://mugglinworks.com/chordmaps/)
 
 ## Demo
 
@@ -27,6 +27,7 @@
 - [ ] Highlight synonyms
 - [ ] Do not dim at home 
 - [ ] Continuous multiple ripples 
+- [ ] Keep explicit bass on inversion 
 - [ ] Recent chords? 
 - [ ] Optimize
   - [ ] Latency
