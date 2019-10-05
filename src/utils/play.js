@@ -1,6 +1,7 @@
 import { SampleLibrary } from '../utils/samples'
 import Register from './register'
 import bindMethods from 'bind-methods'
+import { transposeBy } from '@tonaljs/note'
 
 let current
 let initialized
@@ -42,8 +43,10 @@ async function ready () {
   await initialized
 }
 
-export async function play (notes, release = false) {
+export async function play (notes, channels, release = false) {
   await ready()
+
+  notes = mixChannels(notes, channels)
 
   if (release) {
     unregister(notes)
@@ -64,4 +67,36 @@ export async function play (notes, release = false) {
     // console.log('[ON]', notes.toString())
     register(notes)
   }
+}
+
+export function mixChannels (notes, channels) {
+  return Object.keys(channels.reduce((acc, { bass, mid, voice, octave, channel }) => {
+    const t = octave !== 0 ? n => transpose(n, octave) : n => n
+
+    if (bass) {
+      acc[t(notes[0])] = true
+    }
+
+    if (voice) {
+      acc[t(notes[notes.length - 1])] = true
+    }
+
+    if (mid) {
+      for (let i = 1; i < (notes.length - 1); i++) {
+        acc[t(notes[i])] = true
+      }
+    }
+
+    return acc
+  }, {}))
+}
+
+function transpose (note, octave) {
+  const t = transposeBy(Math.sign(octave) * 8 + 'P')
+
+  for (let i = 0; i < Math.abs(octave); i++) {
+    note = t(note)
+  }
+
+  return note
 }

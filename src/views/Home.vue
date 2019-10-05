@@ -230,7 +230,7 @@ export default {
       if (this.midiOutput) {
         playMidi(this.midiOutput, midi, release)
       } else {
-        play(notes, release)
+        play(notes, this.channels, release)
       }
     },
     full () {

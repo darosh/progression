@@ -1,20 +1,24 @@
 export default function () {
   return {
     store: {},
-    register (notes, value = 1) {
+    add (notes, value, channel) {
       for (const note of notes) {
-        this.store[note] = this.store[note] || 0
-        this.store[note] += value
+        this.store[channel] = this.store[channel] || {}
+        this.store[channel][note] = this.store[channel][note] || 0
+        this.store[channel][note] += value
       }
     },
-    unregister (notes) {
-      this.register(notes, -1)
+    register (notes, channel = 0) {
+      this.add(notes, 1, channel)
     },
-    stopping (notes) {
-      return notes.filter(node => this.store[node])
+    unregister (notes, channel = 0) {
+      this.add(notes, -1, channel)
     },
-    releasing (notes) {
-      return notes.filter(note => !this.store[note])
+    stopping (notes, channel = 0) {
+      return notes.filter(node => this.store[channel] && this.store[channel][node])
+    },
+    releasing (notes, channel = 0) {
+      return notes.filter(note => !this.store[channel] || !this.store[channel][note])
     }
   }
 }
