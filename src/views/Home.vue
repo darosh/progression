@@ -1,10 +1,30 @@
 <template>
-  <v-app>
+  <v-app ref="full">
+    <v-navigation-drawer
+      v-model="showMenu"
+      :temporary="isFull"
+      hide-overlay
+      app
+      width="368"
+      :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-4'">
+      <x-settings />
+      <v-row
+        no-gutters
+        justify="center"
+        align="center"
+        class="py-5"
+        style="opacity: 0.6">
+        <span class="mx-3">
+          Made in Brno, 2019, <a href="https://github.com/darosh/progression">GitHub</a>
+        </span>
+      </v-row>
+    </v-navigation-drawer>
     <v-content>
       <v-container
         fluid
-        class="pa-5">
+        :class="{'pa-5': !isFull, 'pa-0 black': isFull}">
         <v-row
+          v-if="!isFull"
           class="pb-5"
           no-gutters
           align="center">
@@ -36,7 +56,7 @@
                 indeterminate
                 :size="48-3"
                 :width="6"
-                color="rgb(0, 255, 68)"
+                color="accent"
                 class="mr-2" />
               <i>Loading sounds...</i>
             </div>
@@ -93,25 +113,6 @@
               </v-btn>
             </div>
           </v-card>
-          <v-navigation-drawer
-            v-model="showMenu"
-            :temporary="isFull"
-            hide-overlay
-            app
-            width="368"
-            :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-4'">
-            <x-settings />
-            <v-row
-              no-gutters
-              justify="center"
-              align="center"
-              class="py-5"
-              style="opacity: 0.6">
-              <span class="mx-3">
-                Made in Brno, 2019, <a href="https://github.com/darosh/progression">GitHub</a>
-              </span>
-            </v-row>
-          </v-navigation-drawer>
         </v-row>
       </v-container>
     </v-content>
@@ -234,7 +235,7 @@ export default {
     },
     full () {
       if (!document.fullscreenElement) {
-        this.$refs.chart.requestFullscreen()
+        this.$refs.full.$el.requestFullscreen()
         this.isFull = true
         this.showMenu = false
       } else {

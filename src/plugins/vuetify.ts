@@ -7,5 +7,15 @@ Vue.use(Vuetify)
 export default new Vuetify({
   icons: {
     iconfont: 'mdi'
+  },
+  theme: {
+    themes: {
+      dark: {
+        accent: '#00d639'
+      },
+      light: {
+        accent: '#00d639'
+      }
+    }
   }
 })

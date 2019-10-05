@@ -105,25 +105,96 @@
       </v-btn-toggle>
     </v-list-item>
     <v-divider />
-    <v-list-item class="py-5">
-      <v-flex />
-      <v-btn-toggle
-        v-model="dark"
-        rounded>
-        <v-btn
-          text
-          :value="true">
-          Dark
-        </v-btn>
-      </v-btn-toggle>
-    </v-list-item>
-    <v-divider />
     <v-list-item
-      id="midi-menu-wrap"
       class="py-5">
       <v-flex />
       <v-menu
-        attach="#midi-menu-wrap"
+        :close-on-content-click="false"
+        right>
+        <template v-slot:activator="{ on }">
+          <v-btn
+            text
+            v-on="on">
+            Channels
+          </v-btn>
+        </template>
+        <v-card>
+          <v-simple-table :style="{maxWidth: '420px'}">
+            <template v-slot:default>
+              <thead>
+                <tr>
+                  <th class="text-left">
+                    Bass
+                  </th>
+                  <th class="text-left">
+                    Mid
+                  </th>
+                  <th class="text-left">
+                    Voice
+                  </th>
+                  <th class="text-left">
+                    Octave
+                  </th>
+                  <th class="text-left">
+                    Channel
+                  </th>
+                  <th class="text-left" />
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  v-for="(v, key) in channels"
+                  :key="key">
+                  <td>
+                    <v-checkbox v-model="v.bass" />
+                  </td>
+                  <td>
+                    <v-checkbox v-model="v.mid" />
+                  </td>
+                  <td>
+                    <v-checkbox v-model="v.voice" />
+                  </td>
+                  <td>
+                    <v-text-field
+                      v-model="v.octave"
+                      type="number" />
+                  </td>
+                  <td>
+                    <v-text-field
+                      v-model="v.channel"
+                      type="number" />
+                  </td>
+                  <td>
+                    <v-btn
+                      v-if="channels.length > 1"
+                      color="accent"
+                      small
+                      icon
+                      @click="channels.splice(channels.indexOf(v), 1)">
+                      <v-icon>mdi-close-circle</v-icon>
+                    </v-btn>
+                  </td>
+                </tr>
+                <tr>
+                  <td colspan="5" />
+                  <td>
+                    <v-btn
+                      color="accent"
+                      class="my-4"
+                      light
+                      small
+                      icon
+                      @click="channels.push({...channels[channels.length - 1]})">
+                      <v-icon>mdi-plus-circle</v-icon>
+                    </v-btn>
+                  </td>
+                </tr>
+              </tbody>
+            </template>
+          </v-simple-table>
+        </v-card>
+      </v-menu>
+      <v-menu
         left>
         <template v-slot:activator="{ on }">
           <v-btn
@@ -140,7 +211,7 @@
             indeterminate
             :size="48-3"
             :width="6"
-            color="rgb(0, 255, 68)"
+            color="accent"
             class="mr-2" />
           <i>Waiting for MIDI...</i>
         </v-card>
@@ -151,7 +222,9 @@
                 None
               </v-list-item-title>
               <v-list-item-action>
-                <v-icon v-if="midiOutput === null">
+                <v-icon
+                  v-if="midiOutput === null"
+                  color="accent">
                   mdi-check
                 </v-icon>
               </v-list-item-action>
@@ -165,7 +238,9 @@
                 {{ output.name }}
               </v-list-item-title>
               <v-list-item-action>
-                <v-icon v-if="midiOutput === output">
+                <v-icon
+                  v-if="midiOutput === output"
+                  color="accent">
                   mdi-check
                 </v-icon>
               </v-list-item-action>
@@ -173,6 +248,16 @@
           </v-list>
         </v-card>
       </v-menu>
+      <v-btn-toggle
+        v-model="dark"
+        class="ml-5"
+        rounded>
+        <v-btn
+          text
+          :value="true">
+          Dark
+        </v-btn>
+      </v-btn-toggle>
     </v-list-item>
     <v-divider />
   </v-list>
