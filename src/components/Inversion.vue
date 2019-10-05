@@ -72,10 +72,15 @@ export default {
   },
   methods: {
     onMove (event) {
-      const { top } = this.$refs.root.getBoundingClientRect()
+      const { top, left } = this.$refs.root.getBoundingClientRect()
+      const x = event.touches[0].clientX - left
       const y = event.touches[0].clientY - top
       const h = this.height + this.space
       const p = Math.floor((h - y) / this.distance)
+
+      if (x > this.width) {
+        return
+      }
 
       if (p >= 0 && p < this.inversions.length) {
         this.$emit('update:value', this.inversions[p].value)
