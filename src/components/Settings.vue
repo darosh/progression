@@ -119,7 +119,9 @@
           </v-btn>
         </template>
         <v-card>
-          <v-simple-table :style="{maxWidth: '420px'}">
+          <v-simple-table
+            dense
+            :style="{maxWidth: '420px'}">
             <template v-slot:default>
               <thead>
                 <tr>
@@ -146,22 +148,35 @@
                   v-for="(v, key) in channels"
                   :key="key">
                   <td>
-                    <v-checkbox v-model="v.bass" />
+                    <v-checkbox
+                      v-model="v.bass"
+                      class="mt-0"
+                      hide-details />
                   </td>
                   <td>
-                    <v-checkbox v-model="v.mid" />
+                    <v-checkbox
+                      v-model="v.mid"
+                      class="mt-0"
+                      hide-details />
                   </td>
                   <td>
-                    <v-checkbox v-model="v.voice" />
+                    <v-checkbox
+                      v-model="v.voice"
+                      class="mt-0"
+                      hide-details />
                   </td>
                   <td>
                     <v-text-field
                       v-model="v.octave"
+                      class="mt-0"
+                      hide-details
                       type="number" />
                   </td>
                   <td>
                     <v-text-field
                       v-model="v.channel"
+                      class="mt-0"
+                      hide-details
                       type="number" />
                   </td>
                   <td>
@@ -180,7 +195,7 @@
                   <td>
                     <v-btn
                       color="accent"
-                      class="my-4"
+                      class="my-2"
                       light
                       small
                       icon
