@@ -118,9 +118,13 @@
       </v-btn-toggle>
     </v-list-item>
     <v-divider />
-    <v-list-item class="py-5">
+    <v-list-item
+      id="midi-menu-wrap"
+      class="py-5">
       <v-flex />
-      <v-menu bottom>
+      <v-menu
+        attach="#midi-menu-wrap"
+        left>
         <template v-slot:activator="{ on }">
           <v-btn
             text
@@ -140,32 +144,34 @@
             class="mr-2" />
           <i>Waiting for MIDI...</i>
         </v-card>
-        <v-list v-else>
-          <v-list-item @click="midiOutput = null">
-            <v-list-item-title>
-              None
-            </v-list-item-title>
-            <v-list-item-action>
-              <v-icon v-if="midiOutput === null">
-                mdi-check
-              </v-icon>
-            </v-list-item-action>
-          </v-list-item>
-          <v-divider v-if="midiStatus.outputs && midiStatus.outputs.length" />
-          <v-list-item
-            v-for="(output, key) in midiStatus.outputs"
-            :key="key"
-            @click="midiOutput = output">
-            <v-list-item-title>
-              {{ output.name }}
-            </v-list-item-title>
-            <v-list-item-action>
-              <v-icon v-if="midiOutput === output">
-                mdi-check
-              </v-icon>
-            </v-list-item-action>
-          </v-list-item>
-        </v-list>
+        <v-card v-else>
+          <v-list>
+            <v-list-item @click="midiOutput = null">
+              <v-list-item-title>
+                None
+              </v-list-item-title>
+              <v-list-item-action>
+                <v-icon v-if="midiOutput === null">
+                  mdi-check
+                </v-icon>
+              </v-list-item-action>
+            </v-list-item>
+            <v-divider v-if="midiStatus.outputs && midiStatus.outputs.length" />
+            <v-list-item
+              v-for="(output, key) in midiStatus.outputs"
+              :key="key"
+              @click="midiOutput = output">
+              <v-list-item-title>
+                {{ output.name }}
+              </v-list-item-title>
+              <v-list-item-action>
+                <v-icon v-if="midiOutput === output">
+                  mdi-check
+                </v-icon>
+              </v-list-item-action>
+            </v-list-item>
+          </v-list>
+        </v-card>
       </v-menu>
     </v-list-item>
     <v-divider />
