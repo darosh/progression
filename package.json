@@ -16,6 +16,7 @@
     "@tonaljs/midi": "^3.3.1",
     "@tonaljs/note": "^3.2.4",
     "@tonaljs/roman-numeral": "^3.2.3",
+    "bind-methods": "^1.1.0",
     "core-js": "^2.6.5",
     "d3": "^5.12.0",
     "d3-sankey": "^0.12.3",

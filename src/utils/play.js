@@ -1,8 +1,11 @@
 import { SampleLibrary } from '../utils/samples'
+import Register from './register'
+import bindMethods from 'bind-methods'
 
 let current
 let initialized
-const store = {}
+
+const { register, unregister, stopping, releasing } = bindMethods(new Register())
 
 export const playStatus = { loading: false }
 
@@ -43,15 +46,15 @@ export async function play (notes, release = false) {
   await ready()
 
   if (release) {
-    register(notes, -1)
-    const releasedNotes = notes.filter(note => !store[note])
+    unregister(notes)
+    const releasedNotes = releasing(notes)
 
     if (releasedNotes.length) {
       // console.log('[OFF]', releasedNotes.toString())
       current.triggerRelease(releasedNotes)
     }
   } else {
-    const toStop = notes.filter(node => store[node])
+    const toStop = stopping(notes)
 
     if (toStop.length) {
       current.triggerRelease(toStop)
@@ -59,13 +62,6 @@ export async function play (notes, release = false) {
 
     current.triggerAttack(notes)
     // console.log('[ON]', notes.toString())
-    register(notes, 1)
-  }
-}
-
-function register (notes, value) {
-  for (const note of notes) {
-    store[note] = store[note] || 0
-    store[note] += value
+    register(notes)
   }
 }

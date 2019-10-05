@@ -1,4 +1,6 @@
 import WebMidi from 'webmidi'
+import Register from './register'
+import bindMethods from 'bind-methods'
 
 export const midiStatus = {
   loading: false,
@@ -7,7 +9,7 @@ export const midiStatus = {
   initialized: false
 }
 
-const store = {}
+const { register, unregister, stopping, releasing } = bindMethods(new Register())
 
 export function enable () {
   return new Promise((resolve, reject) => {
@@ -42,27 +44,20 @@ export async function initMidi () {
 
 export function play (midiOutput, notes, release) {
   if (release) {
-    register(notes, -1)
-    const releasedNotes = notes.filter(note => !store[note])
+    unregister(notes)
+    const releasedNotes = releasing(notes)
 
     if (releasedNotes.length) {
       midiOutput.stopNote(releasedNotes)
     }
   } else {
-    const toStop = notes.filter(node => store[node])
+    const toStop = stopping(notes)
 
     if (toStop.length) {
       midiOutput.stopNote(toStop)
     }
 
     midiOutput.playNote(notes)
-    register(notes, 1)
-  }
-}
-
-function register (notes, value) {
-  for (const note of notes) {
-    store[note] = store[note] || 0
-    store[note] += value
+    register(notes)
   }
 }
