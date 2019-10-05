@@ -2,13 +2,14 @@ import { transpose, chord } from '@tonaljs/chord'
 import { interval, coordToInterval, encode, note, transpose as transposeNote } from '@tonaljs/tonal'
 import { simplify } from '@tonaljs/note'
 import { names, substract, add } from '@tonaljs/interval'
+import { toMidi, midiToNoteName } from '@tonaljs/midi'
 
 const intervalNames = names()
 
-export function parseChord (romanChord, baseNote) {
+export function parseChord (romanChord, note, octave) {
   const chordInterval = coordToInterval(encode(romanChord)).name
   const { type, bass, acc } = parseBass(romanChord.chordType)
-  const chordName = transpose(baseNote + normalizeChordType(type), chordInterval)
+  const chordName = transpose(note + normalizeChordType(type), chordInterval)
   const chordData = chord(chordName)
   const chordIntervals = chordData.intervals.map(interval => add(chordInterval, interval))
 
@@ -24,12 +25,17 @@ export function parseChord (romanChord, baseNote) {
     chordIntervals.unshift(adjustedBassInterval)
   }
 
-  const trans = interval => transposeNote(`${baseNote}3`, interval)
-  const intervals = chordIntervals.map(trans)
-  const notes = intervals.map(simplify)
-  const midi = intervals.map(n => note(n).midi)
+  const trans = interval => transposeNote(`${note}${octave}`, interval)
 
-  return { midi, notes }
+  return chordIntervals.map(trans)
+}
+
+export function intervalsToNotes (intervals) {
+  return intervals.map(simplify)
+}
+
+export function intervalsToMidi (intervals) {
+  return intervals.map(n => note(n).midi)
 }
 
 export function parseBass (chordType) {
@@ -67,4 +73,31 @@ export function getBassInterval (bass, acc) {
   }
 
   return bassInterval
+}
+
+export function invert (intervals, inversion) {
+  if (!inversion) {
+    return intervals
+  }
+
+  const midis = intervals.map(toMidi)
+  const sign = Math.sign(inversion)
+
+  while (inversion !== 0) {
+    inversion -= sign
+
+    if (sign > 0) {
+      let first = midis.shift()
+      const last = midis[midis.length - 1]
+      while (first <= last) { first += 12 }
+      midis.push(first)
+    } else {
+      let first = midis.pop()
+      const last = midis[0]
+      while (first >= last) { first -= 12 }
+      midis.unshift(first)
+    }
+  }
+
+  return midis.map(midiToNoteName)
 }

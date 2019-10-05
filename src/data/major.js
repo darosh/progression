@@ -42,5 +42,6 @@ export default {
     40: { name: 'VIø/b3', links: [39], group: 3 },
     41: { name: '#IVø', links: [10], group: 3 },
     42: { name: 'V/1', links: [1], group: 4 }
-  }
+  },
+  merge: [[14, 39]]
 }

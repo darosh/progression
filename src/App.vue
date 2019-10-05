@@ -1,15 +1,21 @@
 <template>
-  <router-view />
+  <!--  <router-view />-->
+  <x-home />
 </template>
 
-<script lang="ts">
-import Vue from 'vue'
+<script>
+import XHome from './views/Home'
 
-export default Vue.extend({
-  name: 'App'
-})
+export default {
+  components: { XHome }
+}
 </script>
 <style>
+html {
+  overflow-y: auto !important;
+  user-select: none;
+}
+
 html .v-application *, html .v-application .title, html .v-application svg * {
   font-family: "M PLUS Rounded 1c", sans-serif !important;
 }

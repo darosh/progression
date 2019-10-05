@@ -80,3 +80,7 @@ export function transposeFormatTransposed (name, baseNote) {
 
   return formatTransposed(n, r.chordType, baseNote)
 }
+
+export function formatNumber (value) {
+  return value < 0 ? '−' + Math.abs(value) : value > 0 ? '+' + value : 0
+}

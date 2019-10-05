@@ -130,7 +130,11 @@ function hasParents (obj: GraphNode) {
 
 export function toSankeyLinks (array: GraphNode[]) {
   return array.reduce((acc: GraphLink[], source: GraphNode) => {
-    acc.push(...(source.parents || []).map(target => ({ source, target, value: Math.max(4, source.alts.length + target.alts.length) || 3 })))
+    acc.push(...(source.parents || []).map(target => ({
+      source,
+      target,
+      value: Math.max(source.alts.length, target.alts.length, 5)
+    })))
     return acc
   }, [])
 }
@@ -146,8 +150,17 @@ export function groupByNameAlt (nodes: GraphNode[]) {
   return groupBy((node: GraphNode) => [node.name, node.alt].filter(x => x).join(','), nodes)
 }
 
-export function toBeGrouped (x: { [x: string]: GraphNode[] }) {
-  return Object.values(x).filter(x => x.length > 1).filter(canMergeGroup)
+export function toBeGrouped (x: { [x: string]: GraphNode[] }, raw: any) {
+  return Object.values(x).filter(x => x.length > 1).filter(g => canMergeGroup(g) || isForcedGroup(g, raw))
+}
+
+function isForcedGroup (group: GraphNode[], { merge }: any) {
+  if (!merge) {
+    return false
+  }
+
+  const ids = group.map(({ id }: any) => id).toString()
+  return merge.some((m: any[]) => m.toString() === ids)
 }
 
 export function canMergeGroup (array: GraphNode[]): boolean {

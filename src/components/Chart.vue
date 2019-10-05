@@ -3,7 +3,7 @@
     ref="chart"
     :width="width"
     :height="height"
-    :class="{dark: dark, highlight: highlight, pause: !animate}"
+    :class="{dark: dark, highlight: highlight, pause: !animate, pads: pads}"
     @touchstart.stop="onGlobalTouch"
     @touchend.stop="onGlobalTouch"
     @mousedown.stop="highlight = false"
@@ -79,7 +79,7 @@
           :rx="radius(lastNode)"
           :ry="radius(lastNode)" />
       </clipPath>
-      <g>
+      <g class="links">
         <path
           v-for="(link, key) in graph.links"
           :key="key"
@@ -157,6 +157,14 @@
         xlink:href="#ripply-scott"
         style="pointer-events: none;" />
     </g>
+    <x-inversion
+      :width="inversionPad"
+      :height="height - margin.top - margin.bottom - 32 * 2"
+      :space="margin.left / 2"
+      :inversions="inversions"
+      :value="inversion"
+      :transform="`translate(${[margin.left / 2, margin.top + 32]})`"
+      @update:value="value => $emit('update:inversion', value)" />
   </svg>
 </template>
 <script>
@@ -165,8 +173,11 @@ import * as d3 from 'd3'
 
 import { TimelineMax, Linear } from 'gsap/TweenMax'
 import { debounce } from 'rambdax'
+import link from '../utils/link'
+import XInversion from './Inversion'
 
 export default {
+  components: { XInversion },
   props: {
     graph: {
       type: Object,
@@ -207,6 +218,18 @@ export default {
     animate: {
       type: Boolean,
       default: true
+    },
+    pads: {
+      type: Boolean,
+      default: false
+    },
+    inversions: {
+      type: Array,
+      required: true
+    },
+    inversion: {
+      type: Number,
+      required: true
     }
   },
   data () {
@@ -215,6 +238,7 @@ export default {
       altRadius: 22,
       path: null,
       lastNode: null,
+      inversionPad: 48,
       rippleColor: null,
       lastEnter: null,
       lastPlayed: [],
@@ -235,6 +259,7 @@ export default {
     nodeSize: 'lazyDraw',
     width: 'lazyDraw',
     height: 'lazyDraw',
+    pads: 'lazyDraw',
     margin: 'lazyDraw'
   },
   methods: {
@@ -276,6 +301,7 @@ export default {
       this.onMouseUp(event, node, false)
     },
     onMouseDown (event, node, mouse = true) {
+      node.inversion = this.inversion
       this.highlight = true
       this.ripple(event, 1, node.node, mouse)
       this.lastPlayed.push(node)
@@ -294,7 +320,7 @@ export default {
       const lp = node && this.lastPlayed.find(obj => obj.node === node.node)
 
       if (lp) {
-        this.$emit('release', node)
+        this.$emit('release', lp)
         this.lastPlayed.splice(this.lastPlayed.indexOf(lp), 1)
       } else if (this.lastPlayed.length) {
         this.$emit('release', this.lastPlayed.shift())
@@ -308,10 +334,10 @@ export default {
         ? d3.color(d3.interpolateCubehelix(d3.rgb(color), '#fff')(0.66)).darker(0.11)
         : d3.color(d3.interpolateCubehelix(d3.rgb(color), '#000')(0.33)).darker(0.33)
     },
-    radius ({ radius }) {
+    radius ({ radius, y1, y0 }) {
       const { nodeWidth } = this
 
-      return Math.min(nodeWidth / 2, radius < 1 ? radius * nodeWidth : radius)
+      return Math.min((y1 - y0) / 2, nodeWidth / 2, radius < 1 ? radius * nodeWidth : radius)
     },
     draw () {
       if (!this.graph) {
@@ -321,34 +347,34 @@ export default {
       this.nodeWidth = this.nodeSize
 
       const { margin, graph, iterations } = this
-      const width = this.width - margin.right
       const height = this.height - margin.bottom
+      const nodePad = Math.floor(height / 240) * 6
+      const width = this.width - margin.right
 
       this.altRadius = Math.floor(this.nodeSize / 32) * 9
 
       const san = sankey()
         .nodeWidth(this.nodeWidth)
-        .nodePadding(Math.floor(height / 240) * 6)
+        .nodePadding(nodePad)
         // .nodeSort((b, a) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
         // .nodeSort((a, b) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
         .iterations(iterations)
         .nodeAlign(sankeyCenter)
-        .extent([[margin.left, margin.top], [width, height]])
+        .extent([[margin.left + this.inversionPad, margin.top], [width, height]])
 
       this.path = sankeyLinkHorizontal()
 
       san(graph)
 
+      if (this.pads) {
+        this.toPads(graph, width, height, margin)
+        this.path = link()
+      }
+
       const { altRadius } = this
 
       for (const node of graph.nodes) {
-        let height = node.y1 - node.y0
-
-        if (height > (this.height - margin.top - margin.bottom - 48)) {
-          node.y1 -= 48
-          height = node.y1 - node.y0
-        }
-
+        const height = node.y1 - node.y0
         const vertical = (node.y1 - node.y0) > (node.alts.length * altRadius * 2 - altRadius)
 
         if (vertical) {
@@ -392,6 +418,34 @@ export default {
         scale: 120,
         opacity: 0
       })
+    },
+    toPads ({ nodes, links }, width, height, { left, right, top, bottom }) {
+      const nw = this.nodeWidth = 2 * this.nodeWidth
+
+      nodes = nodes.slice().sort((a, b) => (a.romanChord.step + a.romanChord.chordType).localeCompare(b.romanChord.step + b.romanChord.chordType))
+
+      width -= this.inversionPad
+
+      const cols = 6
+      const rows = Math.ceil(nodes.length / cols)
+      const w = (width - nw - left) / (cols - 1)
+      const h = height / rows
+      let i = 0
+
+      links.forEach(l => (l.width = h / 2))
+
+      for (const node of nodes) {
+        const x = i % cols
+        const y = Math.round((i - x) / cols)
+
+        node.x0 = x * w + left + this.inversionPad
+        node.x1 = node.x0 + nw
+
+        node.y0 = y * h + top
+        node.y1 = (y + 1) * h
+
+        i++
+      }
     }
   }
 }
@@ -560,5 +614,9 @@ path.link.active {
 
 .highlight .link:not(.active) {
   opacity: 0.24;
+}
+
+.pads .link:not(.active) {
+  opacity: 0.12 !important;
 }
 </style>
