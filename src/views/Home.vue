@@ -47,7 +47,7 @@
           no-gutters
           justify="center">
           <v-card
-            :color="$vuetify.theme.dark && isFull ? 'grey darken-4' : null"
+            :color="$vuetify.theme.dark ? 'grey darken-4' : null"
             :style="{borderRadius: '24px'}"
             elevation="1">
             <div style="overflow-x: auto;">
