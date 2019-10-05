@@ -1,5 +1,8 @@
 <template>
-  <g :class="{dark: dark}">
+  <g
+    ref="root"
+    :class="{dark: dark}"
+    @touchmove="onMove">
     <g
       v-for="({value: v, text}, index) in inversions.slice().reverse()"
       :key="v"
@@ -13,7 +16,6 @@
         @mousedown.stop="$emit('update:value', v)"
         @mouseup.stop=""
         @touchstart.stop="$emit('update:value', v)"
-        @touchmove.stop="$emit('update:value', v)"
         @touchend.stop="" />
       <text
         fill="rgba(0,0,0,0.6)"
@@ -22,7 +24,7 @@
         :x="width/2"
         :y="size/2"
         text-anchor="middle"
-        :font-size="width / 2"
+        :font-size="width * 0.4"
         style="pointer-events: none;"
         v-text="text" />
     </g>
@@ -67,31 +69,51 @@ export default {
 
       return size + space
     }
+  },
+  methods: {
+    onMove (event) {
+      const { top } = this.$refs.root.getBoundingClientRect()
+      const y = event.touches[0].clientY - top
+      const h = this.height + this.space
+      const p = Math.floor((h - y) / this.distance)
+
+      if (p >= 0 && p < this.inversions.length) {
+        this.$emit('update:value', this.inversions[p].value)
+      }
+    }
   }
 }
 </script>
 <style scoped>
 rect {
   fill: rgba(0, 0, 0, 0.06);
+  cursor: pointer;
 }
+
 text {
   fill: rgba(0, 0, 0, 0.5);
 }
+
 .active text {
   fill: rgba(0, 0, 0, 0.87);
 }
+
 .active rect {
   fill: rgba(0, 0, 0, 0.12);
 }
+
 .dark rect {
   fill: rgba(255, 255, 255, 0.12);
 }
+
 .dark text {
   fill: rgba(255, 255, 255, 0.6);
 }
+
 .dark .active rect {
   fill: rgba(255, 255, 255, 0.36);
 }
+
 .dark .active text {
   fill: #fff
 }

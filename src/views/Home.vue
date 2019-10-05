@@ -43,16 +43,17 @@
           </v-row>
         </v-row>
         <v-row
+          ref="chart"
           no-gutters
           justify="center">
           <v-card
-            ref="chart"
             :color="$vuetify.theme.dark && isFull ? 'grey darken-4' : null"
-            style="border-radius: 24px;"
+            :style="{borderRadius: '24px'}"
             elevation="1">
             <div style="overflow-x: auto;">
               <x-chart
                 v-if="!!graph"
+                :style="{visibility: hide ? 'hidden' : null}"
                 :graph="graph"
                 :margin="margin"
                 :animate="visible"
@@ -91,26 +92,26 @@
                 <v-icon v-text="`mdi-menu`" />
               </v-btn>
             </div>
-            <v-navigation-drawer
-              v-model="showMenu"
-              :temporary="isFull"
-              hide-overlay
-              app
-              width="368"
-              :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-4'">
-              <x-settings />
-              <v-row
-                no-gutters
-                justify="center"
-                align="center"
-                class="py-5"
-                style="opacity: 0.6">
-                <span class="mx-3">
-                  Made in Brno, 2019, <a href="https://github.com/darosh/progression">GitHub</a>
-                </span>
-              </v-row>
-            </v-navigation-drawer>
           </v-card>
+          <v-navigation-drawer
+            v-model="showMenu"
+            :temporary="isFull"
+            hide-overlay
+            app
+            width="368"
+            :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-4'">
+            <x-settings />
+            <v-row
+              no-gutters
+              justify="center"
+              align="center"
+              class="py-5"
+              style="opacity: 0.6">
+              <span class="mx-3">
+                Made in Brno, 2019, <a href="https://github.com/darosh/progression">GitHub</a>
+              </span>
+            </v-row>
+          </v-navigation-drawer>
         </v-row>
       </v-container>
     </v-content>
@@ -139,6 +140,7 @@ export default {
   data: () => ({
     showMenu: true,
     visible: true,
+    hide: false,
     midi: null,
     graph: null,
     piano: [],
@@ -232,7 +234,7 @@ export default {
     },
     full () {
       if (!document.fullscreenElement) {
-        this.$refs.chart.$el.requestFullscreen()
+        this.$refs.chart.requestFullscreen()
         this.isFull = true
         this.showMenu = false
       } else {

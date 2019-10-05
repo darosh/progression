@@ -37,10 +37,10 @@
         <stop
           :offset="0"
           stop-color="transparent" />
-        <template v-for="(s, key) in [1, 3, 5, 7].map(d => d / 8)">
+        <template v-for="(s, key) in [1, 2.7, 4.7, 6.7].map(d => d / 7)">
           <stop
             :key="`${key}a`"
-            :offset="s - 0.03"
+            :offset="s - 0.035"
             stop-color="transparent" />
           <stop
             :key="`${key}b`"
@@ -52,7 +52,7 @@
             :stop-color="rippleColor" />
           <stop
             :key="`${key}d`"
-            :offset="s + 0.03"
+            :offset="s + 0.035"
             stop-color="transparent" />
         </template>
         <stop
@@ -114,7 +114,7 @@
             dy=".35em"
             text-anchor="middle"
             :x="nodeWidth / 2"
-            :font-size="altRadius">
+            :font-size="Math.max(altRadius, 14)">
             <tspan
               v-for="(part, keyName) in format(node)"
               :key="keyName"
@@ -168,13 +168,12 @@
   </svg>
 </template>
 <script>
-import { sankey, sankeyCenter, sankeyLinkHorizontal } from 'd3-sankey'
 import * as d3 from 'd3'
 
 import { TimelineMax, Linear } from 'gsap/TweenMax'
 import { debounce } from 'rambdax'
-import link from '../utils/link'
 import XInversion from './Inversion'
+import { draw } from '@/utils/draw'
 
 export default {
   components: { XInversion },
@@ -243,24 +242,25 @@ export default {
       lastEnter: null,
       lastPlayed: [],
       highlight: false,
-      lazyDraw: debounce(this.draw, 600)
+      lazyDraw: debounce(this.draw, 100),
+      lazyDrawOrNot: null
     }
   },
   computed: {
     lastEnterName () {
       return this.lastEnter && this.lastEnter.name
+    },
+    graphValues () {
+      const { graph, nodeSize, width, height, pads, margin } = this
+
+      return graph, nodeSize, width, height, pads, margin, Date.now() // eslint-disable-line no-sequences
     }
   },
   watch: {
-    graph: {
-      handler: 'draw',
+    graphValues: {
+      handler: 'lazyDraw',
       immediate: true
-    },
-    nodeSize: 'lazyDraw',
-    width: 'lazyDraw',
-    height: 'lazyDraw',
-    pads: 'lazyDraw',
-    margin: 'lazyDraw'
+    }
   },
   methods: {
     onEnter (node) {
@@ -345,50 +345,9 @@ export default {
       }
 
       this.nodeWidth = this.nodeSize
-
-      const { margin, graph, iterations } = this
-      const height = this.height - margin.bottom
-      const nodePad = Math.floor(height / 240) * 6
-      const width = this.width - margin.right
-
-      this.altRadius = Math.floor(this.nodeSize / 32) * 9
-
-      const san = sankey()
-        .nodeWidth(this.nodeWidth)
-        .nodePadding(nodePad)
-        // .nodeSort((b, a) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
-        // .nodeSort((a, b) => (a.romanChord.step + a.romanChord.alt) - (b.romanChord.step + b.romanChord.alt))
-        .iterations(iterations)
-        .nodeAlign(sankeyCenter)
-        .extent([[margin.left + this.inversionPad, margin.top], [width, height]])
-
-      this.path = sankeyLinkHorizontal()
-
-      san(graph)
-
-      if (this.pads) {
-        this.toPads(graph, width, height, margin)
-        this.path = link()
-      }
-
-      const { altRadius } = this
-
-      for (const node of graph.nodes) {
-        const height = node.y1 - node.y0
-        const vertical = (node.y1 - node.y0) > (node.alts.length * altRadius * 2 - altRadius)
-
-        if (vertical) {
-          node.altsTranslate = node.alts.map((alt, index) => [
-            this.nodeWidth,
-            height - index * (((height) > (node.alts.length * altRadius * 2 - altRadius)) ? altRadius * 2 : (height + altRadius) / node.alts.length)
-          ])
-        } else {
-          node.altsTranslate = node.alts.map((alt, index) => [
-            index * altRadius * 2,
-            height
-          ])
-        }
-      }
+      const { altRadius, path } = draw(this)
+      this.altRadius = altRadius
+      this.path = path
     },
     async ripple (event, timing, node, mouse) {
       let x
@@ -418,34 +377,6 @@ export default {
         scale: 120,
         opacity: 0
       })
-    },
-    toPads ({ nodes, links }, width, height, { left, right, top, bottom }) {
-      const nw = this.nodeWidth = 2 * this.nodeWidth
-
-      nodes = nodes.slice().sort((a, b) => (a.romanChord.step + a.romanChord.chordType).localeCompare(b.romanChord.step + b.romanChord.chordType))
-
-      width -= this.inversionPad
-
-      const cols = 6
-      const rows = Math.ceil(nodes.length / cols)
-      const w = (width - nw - left) / (cols - 1)
-      const h = height / rows
-      let i = 0
-
-      links.forEach(l => (l.width = h / 2))
-
-      for (const node of nodes) {
-        const x = i % cols
-        const y = Math.round((i - x) / cols)
-
-        node.x0 = x * w + left + this.inversionPad
-        node.x1 = node.x0 + nw
-
-        node.y0 = y * h + top
-        node.y1 = (y + 1) * h
-
-        i++
-      }
     }
   }
 }
