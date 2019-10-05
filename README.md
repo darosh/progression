@@ -28,7 +28,7 @@
 - [ ] Do not dim at home 
 - [ ] Continuous multiple ripples 
 - [ ] Keep explicit bass on inversion 
-- [ ] Recent chords? 
+- [ ] Short help 
 - [ ] Optimize
   - [ ] Latency
   - [ ] More responsive full screen
