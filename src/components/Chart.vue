@@ -109,22 +109,13 @@
             @touchend.stop="onTouchEnd($event, {node})"
             @mousedown.stop.prevent="onMouseDown($event, {node})"
             @mouseup.stop.prevent="onMouseUp($event, {node})" />
-          <text
+          <x-chord
+            :secondary="altRadius - 4"
+            :post="altRadius - 2"
             :y="(node.y1 - node.y0) / 2"
-            dy=".35em"
-            text-anchor="middle"
             :x="nodeWidth / 2"
-            :font-size="Math.max(altRadius, 14)">
-            <tspan
-              v-for="(part, keyName) in format(node)"
-              :key="keyName"
-              :font-size="part.secondary ? altRadius - 4 : part.post ? altRadius - 2 : null"
-              :style="{
-                fontWeight: part.primary ? '700' : '500'
-              }"
-              :baseline-shift="part.secondary ? 6.3 : (part.pre ? -0.6 : (part.post ? 4 : null))"
-              v-text="part.text" />
-          </text>
+            :font-size="Math.max(altRadius, 14)"
+            :parts="format(node)" />
           <g
             v-for="(alt, index) in node.alts"
             :key="alt"
@@ -165,6 +156,14 @@
       :value="inversion"
       :transform="`translate(${[margin.left / 2, margin.top + 32]})`"
       @update:value="value => $emit('update:inversion', value)" />
+    <x-recent
+      :width="inversionPad * 1.5"
+      :height="height - margin.top / 2 - margin.bottom / 2"
+      :space="margin.left / 2"
+      :items="recent"
+      :format="format"
+      :value="inversion"
+      :transform="`translate(${[width - inversionPad * 1.5 - margin.right / 2, margin.top / 2]})`" />
   </svg>
 </template>
 <script>
@@ -173,10 +172,12 @@ import * as d3 from 'd3'
 import { TimelineMax, Linear } from 'gsap/TweenMax'
 import { debounce } from 'rambdax'
 import XInversion from './Inversion'
+import XRecent from './Recent'
+import XChord from './Chord'
 import { draw } from '@/utils/draw'
 
 export default {
-  components: { XInversion },
+  components: { XInversion, XRecent, XChord },
   props: {
     graph: {
       type: Object,
@@ -241,6 +242,7 @@ export default {
       rippleColor: null,
       lastEnter: null,
       lastPlayed: [],
+      recent: [],
       highlight: false,
       lazyDraw: debounce(this.draw, 100),
       lazyDrawOrNot: null
@@ -285,12 +287,12 @@ export default {
 
       this.highlight = false
     },
-    onTouchStart (event, node) {
+    onTouchStart (event, node, recent = false) {
       if (event.cancelable) {
         event.preventDefault()
       }
 
-      this.onMouseDown(event, node, false)
+      this.onMouseDown(event, node, false, recent)
       this.onEnter(node.node || node)
     },
     onTouchEnd (event, node) {
@@ -300,11 +302,23 @@ export default {
 
       this.onMouseUp(event, node, false)
     },
-    onMouseDown (event, node, mouse = true) {
-      node.inversion = this.inversion
+    onMouseDown (event, node, mouse = true, recent = false) {
+      if (!recent) {
+        node.inversion = this.inversion
+        this.ripple(event, 1, node.node, mouse)
+      }
+
       this.highlight = true
-      this.ripple(event, 1, node.node, mouse)
       this.lastPlayed.push(node)
+
+      if (!this.recent.includes(node)) {
+        this.recent.push(node)
+
+        if (this.recent.length > 9) {
+          this.recent.shift()
+        }
+      }
+
       this.$emit('attack', node)
     },
     onMouseUp (event, node, mouse = true) {

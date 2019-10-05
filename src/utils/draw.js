@@ -2,10 +2,10 @@ import { sankey, sankeyRight, sankeyLinkHorizontal } from 'd3-sankey'
 import link from '../utils/link'
 
 export function draw ({ margin, graph, nodeSize, iterations, height, inversionPad, width, pads }) {
+  const altRadius = Math.floor(nodeSize / 32) * 9
   const h = height - margin.bottom
   const nodePad = Math.floor(height / 240) * 6
-  const w = width - margin.right
-  const altRadius = Math.floor(nodeSize / 32) * 9
+  const w = width - margin.right - inversionPad * 1.5 - altRadius / 2
 
   const san = sankey()
     .nodeWidth(nodeSize)
