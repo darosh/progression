@@ -358,10 +358,10 @@ export default {
         return
       }
 
-      this.nodeWidth = this.nodeSize
-      const { altRadius, path } = draw(this)
+      const { altRadius, path, nodeSize } = draw(this)
       this.altRadius = altRadius
       this.path = path
+      this.nodeWidth = nodeSize
     },
     async ripple (event, timing, node, mouse) {
       let x

@@ -19,7 +19,8 @@ export function draw ({ margin, graph, nodeSize, iterations, height, inversionPa
   let path
 
   if (pads) {
-    toPads(graph, w, w, margin, inversionPad, nodeSize)
+    const { nodeWidth } = toPads(graph, w, h, margin, inversionPad, nodeSize)
+    nodeSize = nodeWidth
     path = link()
   } else {
     path = sankeyLinkHorizontal()
@@ -27,7 +28,7 @@ export function draw ({ margin, graph, nodeSize, iterations, height, inversionPa
 
   adjustAlts({ altRadius, graph, nodeSize })
 
-  return { altRadius, graph, path }
+  return { altRadius, graph, path, nodeSize }
 }
 
 function adjustAlts ({ altRadius, graph, nodeSize }) {
@@ -76,4 +77,6 @@ function toPads ({ nodes, links }, width, height, { left, right, top, bottom }, 
 
     i++
   }
+
+  return { nodeWidth }
 }
