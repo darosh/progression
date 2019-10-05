@@ -20,6 +20,7 @@
         @mouseup.stop.prevent="$parent.onMouseUp($event, v)" />
       <rect
         v-else
+        class="placeholder"
         :width="width"
         :height="size"
         rx="8"
@@ -112,6 +113,10 @@ export default {
 rect {
   fill: rgba(0, 0, 0, 0.06);
   cursor: pointer;
+}
+
+rect.placeholder {
+  cursor: initial;
 }
 
 text {
