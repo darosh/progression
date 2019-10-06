@@ -5,7 +5,6 @@
     <g
       v-for="(v, index) in slots"
       :key="index"
-      :class="{active: value === v}"
       :transform="`translate(${[0, index * distance]})`">
       <rect
         v-if="v"
@@ -28,7 +27,7 @@
         rx="8"
         ry="8" />
       <text
-        v-if="v && (v.inversion !== 0)"
+        v-if="(size > 52) && v && (v.inversion !== 0)"
         font-size="14"
         text-anchor="middle"
         alignment-baseline="middle"
@@ -37,7 +36,7 @@
         :x="width / 2"
         v-text="formatNumber(v.inversion)" />
       <text
-        v-if="v && v.alt"
+        v-if="(size > 52) && v && v.alt"
         font-size="14"
         dy="-0.2em"
         :x="width / 2"
@@ -123,6 +122,7 @@ rect {
 rect.placeholder {
   fill: rgba(0, 0, 0, 0.06);
   cursor: initial;
+  pointer-events: none;
 }
 
 .slot {
@@ -136,15 +136,8 @@ rect.placeholder {
 }
 
 text {
-  fill: rgba(0, 0, 0, 0.6);
-}
-
-.active text {
-  fill: rgba(0, 0, 0, 0.87);
-}
-
-.active rect {
-  fill: rgba(0, 0, 0, 0.12);
+  fill: rgba(0, 0, 0, 0.8);
+  pointer-events: none;
 }
 
 .dark rect {
@@ -152,14 +145,6 @@ text {
 }
 
 .dark text {
-  fill: rgba(255, 255, 255, 0.6);
-}
-
-.dark .active rect {
-  fill: rgba(255, 255, 255, 0.36);
-}
-
-.dark .active text {
-  fill: #fff
+  fill: rgba(255, 255, 255, 0.8 );
 }
 </style>

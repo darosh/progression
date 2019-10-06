@@ -313,7 +313,7 @@ export default {
       this.highlight = true
       this.lastPlayed.push(node)
 
-      if (!this.recent.includes(node)) {
+      if (!this.recent.some(({ node: { id }, alt, inversion }) => node.node.id === id && node.alt === alt && node.inversion === inversion)) {
         this.recent.unshift(node)
 
         if (this.recent.length > 9) {
