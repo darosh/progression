@@ -5,7 +5,17 @@
     <g
       v-for="(v, index) in slots"
       :key="index"
+      :class="{active: v && (v === value)}"
       :transform="`translate(${[0, index * distance]})`">
+      <text
+        v-if="v"
+        :style="{ fontSize: `${size * 0.8}px`, opacity: dark ? 0.28 : 0.14 }"
+        text-anchor="middle"
+        alignment-baseline="text-bottom"
+        dy="0.1em"
+        :y="size"
+        :x="width * 0.97"
+        v-text="index + 1" />
       <rect
         v-if="v"
         :width="width"
@@ -62,6 +72,8 @@
 import XChord from './Chord'
 import { formatNumber } from '@/utils/format'
 
+const keys = {}
+
 export default {
   components: {
     XChord
@@ -70,6 +82,10 @@ export default {
     items: {
       type: Array,
       required: true
+    },
+    value: {
+      type: Object,
+      default: null
     },
     width: {
       type: Number,
@@ -92,7 +108,6 @@ export default {
       default: ({ name }) => [{ text: name }]
     }
   },
-  data: () => ({ value: null }),
   computed: {
     size () {
       const { height, space, slots: { length } } = this
@@ -108,8 +123,37 @@ export default {
       return [...this.items, ...new Array(9)].slice(0, 9)
     }
   },
+  mounted () {
+    window.addEventListener('keydown', this.onKeyDown)
+    window.addEventListener('keyup', this.onKeyUp)
+  },
+  beforeDestroy () {
+    window.removeEventListener('keydown', this.onKeyDown)
+    window.removeEventListener('keyup', this.onKeyUp)
+  },
   methods: {
-    formatNumber
+    formatNumber,
+    onKeyDown (event) {
+      const index = parseInt(event.key, 10) - 1
+
+      if (keys[index] || isNaN(index) || (index < 0) || (index >= this.items.length)) {
+        return
+      }
+
+      keys[index] = true
+      this.$parent.onEnter(this.items[index].node)
+      this.$parent.onMouseDown(null, this.items[index], null, true)
+    },
+    onKeyUp () {
+      const index = parseInt(event.key, 10) - 1
+
+      if (isNaN(index) || (index < 0) || (index >= this.items.length)) {
+        return
+      }
+
+      keys[index] = false
+      this.$parent.onMouseUp(null, this.items[index], true)
+    }
   }
 }
 </script>
@@ -131,8 +175,21 @@ rect.placeholder {
 }
 
 .slot:hover {
-  fill-opacity: .5;
+  stroke-width: 1.5;
+  fill-opacity: 0.75;
   opacity: 1;
+}
+
+.active .slot {
+  opacity: 1;
+}
+
+.active rect.slot {
+  stroke: #000 !important;
+  stroke-dasharray: 1.5 4.5;
+  stroke-width: 1.5 !important;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 text {
@@ -145,6 +202,6 @@ text {
 }
 
 .dark text {
-  fill: rgba(255, 255, 255, 0.8 );
+  fill: rgba(255, 255, 255, 0.8);
 }
 </style>

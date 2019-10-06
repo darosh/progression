@@ -161,8 +161,9 @@
       :height="height - margin.top / 2 - margin.bottom / 2"
       :space="margin.left / 2"
       :items="recent"
+      :dark="dark"
       :format="format"
-      :value="inversion"
+      :value="lastRecent"
       :transform="`translate(${[width - inversionPad * 1.5 - margin.right / 2, margin.top / 2]})`" />
   </svg>
 </template>
@@ -241,6 +242,7 @@ export default {
       inversionPad: 48,
       rippleColor: null,
       lastEnter: null,
+      lastRecent: null,
       lastPlayed: [],
       recent: [],
       highlight: false,
@@ -313,7 +315,9 @@ export default {
       this.highlight = true
       this.lastPlayed.push(node)
 
-      if (!this.recent.some(({ node: { id }, alt, inversion }) => node.node.id === id && node.alt === alt && node.inversion === inversion)) {
+      this.lastRecent = this.recent.find(({ node: { id }, alt, inversion }) => node.node.id === id && node.alt === alt && node.inversion === inversion)
+
+      if (!this.lastRecent) {
         this.recent.unshift(node)
 
         if (this.recent.length > 9) {

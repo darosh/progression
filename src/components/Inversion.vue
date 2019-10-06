@@ -70,7 +70,28 @@ export default {
       return size + space
     }
   },
+  mounted () {
+    window.addEventListener('keydown', this.onKeyDown)
+  },
+  beforeDestroy () {
+    window.removeEventListener('keydown', this.onKeyDown)
+  },
   methods: {
+    onKeyDown (event) {
+      if (event.key === 'w') {
+        const i = this.inversions.indexOf(this.inversions.find(i => i.value === this.value)) + 1
+
+        if (this.inversions[i]) {
+          this.$emit('update:value', this.inversions[i].value)
+        }
+      } else if (event.key === 's') {
+        const i = this.inversions.indexOf(this.inversions.find(i => i.value === this.value)) - 1
+
+        if (this.inversions[i]) {
+          this.$emit('update:value', this.inversions[i].value)
+        }
+      }
+    },
     onMove (event) {
       const { top, left } = this.$refs.root.getBoundingClientRect()
       const x = event.touches[0].clientX - left

@@ -792,16 +792,16 @@ packages:
       '@hapi/address': 2.1.2
       '@hapi/bourne': 1.3.2
       '@hapi/hoek': 8.3.0
-      '@hapi/topo': 3.1.4
+      '@hapi/topo': 3.1.5
     dev: true
     resolution:
       integrity: sha512-entf8ZMOK8sc+8YfeOlM8pCfg3b5+WZIKBfUaaJT8UsjAAPjartzxIYm3TIbjvA4u+u++KbcXD38k682nVHDAQ==
-  /@hapi/topo/3.1.4:
+  /@hapi/topo/3.1.5:
     dependencies:
       '@hapi/hoek': 8.3.0
     dev: true
     resolution:
-      integrity: sha512-aVWQTOI9wBD6zawmOr6f+tdEIxQC8JXfQVLTjgGe8YEStAWGn/GNNVTobKJhbWKveQj2RyYF3oYbO9SC8/eOCA==
+      integrity: sha512-bi9m1jrui9LlvtVdLaHv0DqeOoe+I8dep+nEcTgW6XxJHL3xArQcilYz3tIp0cRC4gWlsVtABK7vNKg4jzEmAA==
   /@intervolga/optimize-cssnano-plugin/1.0.6_webpack@4.41.0:
     dependencies:
       cssnano: 4.1.10
@@ -1817,7 +1817,7 @@ packages:
   /autoprefixer/9.6.4:
     dependencies:
       browserslist: 4.7.0
-      caniuse-lite: 1.0.30000998
+      caniuse-lite: 1.0.30000999
       chalk: 2.4.2
       normalize-range: 0.1.2
       num2fraction: 1.2.2
@@ -2317,7 +2317,7 @@ packages:
       integrity: sha512-Z942RysHXmJrhqk88FmKBVq/v5tqmSkDz7p54G/MGyjMnCFFnC79XWNbg+Vta8W6Wb2qtSZTSxIGkJrRpCFEiA==
   /browserslist/4.7.0:
     dependencies:
-      caniuse-lite: 1.0.30000998
+      caniuse-lite: 1.0.30000999
       electron-to-chromium: 1.3.275
       node-releases: 1.1.34
     dev: true
@@ -2542,16 +2542,16 @@ packages:
   /caniuse-api/3.0.0:
     dependencies:
       browserslist: 4.7.0
-      caniuse-lite: 1.0.30000998
+      caniuse-lite: 1.0.30000999
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
     dev: true
     resolution:
       integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==
-  /caniuse-lite/1.0.30000998:
+  /caniuse-lite/1.0.30000999:
     dev: true
     resolution:
-      integrity: sha512-8Tj5sPZR9kMHeDD9SZXIVr5m9ofufLLCG2Y4QwQrH18GIwG+kCc+zYdlR036ZRkuKjVVetyxeAgGA1xF7XdmzQ==
+      integrity: sha512-1CUyKyecPeksKwXZvYw0tEoaMCo/RwBlXmEtN5vVnabvO0KPd9RQLcaAuR9/1F+KDMv6esmOFWlsXuzDk+8rxg==
   /capture-exit/1.2.0:
     dependencies:
       rsvp: 3.6.2
@@ -10519,7 +10519,7 @@ packages:
       schema-utils: 1.0.0
       serialize-javascript: 1.9.1
       source-map: 0.6.1
-      terser: 4.3.7
+      terser: 4.3.8
       webpack: 4.41.0_webpack@4.41.0
       webpack-sources: 1.4.3
       worker-farm: 1.7.0
@@ -10530,7 +10530,7 @@ packages:
       webpack: ^4.0.0
     resolution:
       integrity: sha512-ZXmmfiwtCLfz8WKZyYUuuHf3dMYEjg8NrjHMb0JqHVHVOSkzp3cW2/XG1fP3tRhqEqSzMwzzRQGtAPbs4Cncxg==
-  /terser/4.3.7:
+  /terser/4.3.8:
     dependencies:
       commander: 2.20.1
       source-map: 0.6.1
@@ -10540,7 +10540,7 @@ packages:
       node: '>=6.0.0'
     hasBin: true
     resolution:
-      integrity: sha512-rJFxzWIzJdgiOwYIPJHu6L3hDegEYJj2cHuKcngMraUfhMXGDEbok9Tqjw7yxzrU4IagvG74uTEKdiqeG6T7bg==
+      integrity: sha512-otmIRlRVmLChAWsnSFNO0Bfk6YySuBp6G9qrHiJwlLDd4mxe2ta4sjI7TzIR+W1nBMjilzrMcPOz9pSusgx3hQ==
   /test-exclude/4.2.3:
     dependencies:
       arrify: 1.0.1
