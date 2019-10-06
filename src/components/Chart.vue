@@ -306,6 +306,8 @@ export default {
       if (!recent) {
         node.inversion = this.inversion
         this.ripple(event, 1, node.node, mouse)
+      } else {
+        this.ripple(this.nodeCenter(node), 1, node.node, mouse)
       }
 
       this.highlight = true
@@ -389,6 +391,15 @@ export default {
         scale: 120,
         opacity: 0
       })
+    },
+    nodeCenter (node) {
+      if (node.alt) {
+        const t = node.node.altsTranslate[node.node.alts.indexOf(node.alt)]
+
+        return { offsetX: node.node.x0 + t[0], offsetY: node.node.y0 + t[1] }
+      }
+
+      return { offsetX: (node.node.x1 + node.node.x0) / 2, offsetY: (node.node.y1 + node.node.y0) / 2 }
     }
   }
 }
