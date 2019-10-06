@@ -63,7 +63,6 @@
           </v-row>
         </v-row>
         <v-row
-          ref="chart"
           no-gutters
           justify="center">
           <v-card
@@ -72,6 +71,7 @@
             elevation="1">
             <div style="overflow-x: auto;">
               <x-chart
+                ref="chart"
                 v-if="!!graph"
                 :style="{visibility: hide ? 'hidden' : null}"
                 :graph="graph"
@@ -88,6 +88,7 @@
                 :node-size="nodeWidth"
                 @enter="activate($event, true)"
                 @leave="activate($event, false)"
+                @update:recent="recentCount = $event"
                 @attack="play"
                 @release="play($event, true)" />
             </div>
@@ -110,6 +111,17 @@
                 large
                 @click="showMenu = !showMenu">
                 <v-icon v-text="`mdi-menu`" />
+              </v-btn>
+            </div>
+            <div
+              v-if="recentCount"
+              style="position: absolute; bottom: 0; right: 0;"
+              class="pa-2">
+              <v-btn
+                icon
+                large
+                @click="$refs.chart.recent = []; recentCount = 0">
+                <v-icon v-text="`mdi-close`" />
               </v-btn>
             </div>
           </v-card>
@@ -147,7 +159,8 @@ export default {
     piano: [],
     playStatus,
     midiStatus,
-    isFull: false
+    isFull: false,
+    recentCount: 0
   }),
   computed: {
     width () {

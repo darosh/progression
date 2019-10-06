@@ -192,6 +192,10 @@ rect.placeholder {
   stroke-linejoin: round;
 }
 
+.dark .active rect.slot {
+  stroke: #fff !important;
+}
+
 text {
   fill: rgba(0, 0, 0, 0.8);
   pointer-events: none;

@@ -158,7 +158,7 @@
       @update:value="value => $emit('update:inversion', value)" />
     <x-recent
       :width="inversionPad * 1.5"
-      :height="height - margin.top / 2 - margin.bottom / 2"
+      :height="height - margin.top / 2 - margin.bottom  - 32"
       :space="margin.left / 2"
       :items="recent"
       :dark="dark"
@@ -319,6 +319,7 @@ export default {
 
       if (!this.lastRecent) {
         this.recent.unshift(node)
+        this.$emit('update:recent', this.recent.length)
 
         if (this.recent.length > 9) {
           this.recent.pop()

@@ -78,13 +78,13 @@ export default {
   },
   methods: {
     onKeyDown (event) {
-      if (event.key === 'w') {
+      if (event.key.toLowerCase() === 'w') {
         const i = this.inversions.indexOf(this.inversions.find(i => i.value === this.value)) + 1
 
         if (this.inversions[i]) {
           this.$emit('update:value', this.inversions[i].value)
         }
-      } else if (event.key === 's') {
+      } else if (event.key.toLowerCase() === 's') {
         const i = this.inversions.indexOf(this.inversions.find(i => i.value === this.value)) - 1
 
         if (this.inversions[i]) {
