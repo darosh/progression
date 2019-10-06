@@ -6,7 +6,7 @@
 
 [https://darosh.github.io/progression/](https://darosh.github.io/progression/)
 
-## To do / Ideas
+## To do / Random ideas
 
 - [ ] Touch / pen velocity?
 - [ ] Polyharmony (piano preview) ...as option?
