@@ -1,5 +1,6 @@
 import { SampleLibrary } from '../utils/samples'
 import Register from './register'
+import data from '../components/Global'
 import bindMethods from 'bind-methods'
 import { transposeBy } from '@tonaljs/note'
 
@@ -26,12 +27,10 @@ async function initialize () {
   await Tone.ToneAudioBuffer.loaded()
   playStatus.loading = false
 
-  const vol = new Tone.Volume(-32)
-
   for (const property in samples) {
     if (samples.hasOwnProperty(property)) {
-      samples[property].release = 0.5
-      samples[property].chain(vol, Tone.Destination)
+      samples[property].release = 1
+      samples[property].toDestination()
     }
   }
 
@@ -45,6 +44,8 @@ async function ready () {
 
 export async function play (notes, channels, release = false) {
   await ready()
+
+  current.volume.value = velocityToVolume(data.volume)
 
   notes = mixChannels(notes, channels)
 
@@ -99,4 +100,8 @@ function transpose (note, octave) {
   }
 
   return note
+}
+
+export function velocityToVolume (volume) {
+  return Math.round(Math.log10((volume / 127) * 10) * 32 - 32) || 0
 }

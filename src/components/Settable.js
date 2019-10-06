@@ -5,7 +5,7 @@ export default {
   computed: {
     ...syncAll(global),
     rootNote () {
-      return `${this.rootPitch}${this.rootAccidental}`
+      return `${this.rootPitch}${this.rootAccidental || ''}`
     },
     rootNoteOctave () {
       return `${this.rootNote}${this.rootOctave}`

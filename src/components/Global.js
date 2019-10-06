@@ -8,14 +8,16 @@ const defaultChannels = Object.freeze([
     mid: true,
     voice: true,
     octave: 0,
-    channel: 1
+    channel: 0,
+    velocity: 64
   },
   {
     bass: true,
     mid: false,
     voice: false,
     octave: -1,
-    channel: 2
+    channel: 1,
+    velocity: 64
   }
 ])
 
@@ -26,7 +28,7 @@ const data = {
   // Root
   rootOctave: 3,
   rootPitch: 'C',
-  rootAccidental: '',
+  rootAccidental: null,
 
   // Chord
   inversion: 0,
@@ -41,6 +43,7 @@ const data = {
   dark: null,
 
   // MIDI
+  volume: 64,
   midiOutput: null,
   channels: defaultChannels.map(o => ({ ...o })),
 
@@ -55,7 +58,7 @@ const data = {
     // { name: 'Circular', value: circular }
   ]),
   accidentals: Object.freeze([
-    { name: '♮', value: '' },
+    { name: '♮', value: null },
     { name: '♯', value: '#' },
     { name: '♭', value: 'b' }
   ])
