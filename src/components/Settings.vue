@@ -320,6 +320,7 @@
       Jump to green one at any time and follow to the right.
       Use +3/-3 chord inversion buttons or W/S hot keys.
       See and replay recent chords on the right (hot keys 1-9).
+      Have fun!
     </p>
     <v-divider />
   </v-list>
