@@ -1,6 +1,7 @@
 <template>
   <v-app ref="full">
     <v-navigation-drawer
+      :mobile-break-point="mbp"
       v-model="showMenu"
       :temporary="isFull"
       hide-overlay
@@ -147,11 +148,14 @@ import { intervalsToMidi, intervalsToNotes, invert, parseChord } from '../utils/
 import { initMidi, midiStatus, play as playMidi } from '../utils/midi'
 import { play, playStatus } from '../utils/play'
 
+const mbp = 1640
+
 export default {
   components: { XSettings, XChart, XKeyboard },
   mixins: [Settable],
   data: () => ({
-    showMenu: true,
+    mbp,
+    showMenu: window.innerWidth >= mbp,
     visible: true,
     hide: false,
     midi: null,
