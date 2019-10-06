@@ -70,7 +70,7 @@ function playChannel (midiOutput, notes, channel, velocity, release = false) {
     }
 
     midiOutput.playNote(notes, channel, { velocity, rawVelocity: true })
-    register(notes)
+    register(notes, channel)
   }
 }
 
