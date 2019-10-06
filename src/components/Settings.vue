@@ -203,8 +203,8 @@
                     <td>
                       <v-text-field
                         v-model="v.channel"
-                        min="-1"
-                        max="15"
+                        min="1"
+                        max="16"
                         class="mt-0"
                         hide-details
                         type="number" />

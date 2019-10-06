@@ -71,8 +71,8 @@
             elevation="1">
             <div style="overflow-x: auto;">
               <x-chart
-                ref="chart"
                 v-if="!!graph"
+                ref="chart"
                 :style="{visibility: hide ? 'hidden' : null}"
                 :graph="graph"
                 :margin="margin"
@@ -241,7 +241,7 @@ export default {
       }
 
       if (this.midiOutput) {
-        playMidi(this.midiOutput, midi, release)
+        playMidi(this.midiOutput, midi, this.channels, release)
       } else {
         play(notes, this.channels, release)
       }

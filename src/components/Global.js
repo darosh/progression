@@ -8,7 +8,7 @@ const defaultChannels = Object.freeze([
     mid: true,
     voice: true,
     octave: 0,
-    channel: 0,
+    channel: 1,
     velocity: 64
   },
   {
@@ -16,7 +16,7 @@ const defaultChannels = Object.freeze([
     mid: false,
     voice: false,
     octave: -1,
-    channel: 1,
+    channel: 2,
     velocity: 64
   }
 ])

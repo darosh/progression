@@ -158,7 +158,7 @@
       @update:value="value => $emit('update:inversion', value)" />
     <x-recent
       :width="inversionPad * 1.5"
-      :height="height - margin.top / 2 - margin.bottom  - 32"
+      :height="height - margin.top / 2 - margin.bottom - 32"
       :space="margin.left / 2"
       :items="recent"
       :dark="dark"
