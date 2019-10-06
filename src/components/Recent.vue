@@ -11,8 +11,10 @@
         v-if="v"
         :width="width"
         :height="size"
-        rx="8"
-        ry="8"
+        class="slot"
+        :rx="$parent.radius(v.node, width * 0.614)"
+        :ry="$parent.radius(v.node, width * 0.614)"
+        :style="{fill: v.node.color, stroke: $parent.stroke(v.node.color)}"
         @mouseenter="$parent.onEnter(v.node)"
         @touchstart.stop="$parent.onTouchStart($event, v, true)"
         @touchend.stop="$parent.onTouchEnd($event, v)"
@@ -28,22 +30,25 @@
       <text
         v-if="v && (v.inversion !== 0)"
         font-size="14"
-        text-anchor="end"
-        dy="-0.10em"
-        :y="size - 4"
-        :x="width - 4"
+        text-anchor="middle"
+        alignment-baseline="middle"
+        dy="0.2em"
+        :y="size * 3 / 4"
+        :x="width / 2"
         v-text="formatNumber(v.inversion)" />
       <text
         v-if="v && v.alt"
         font-size="14"
-        dy="-0.10em"
-        :y="4"
-        :x="4"
-        alignment-baseline="before-edge"
+        dy="-0.2em"
+        :x="width / 2"
+        alignment-baseline="middle"
+        :y="size / 4"
+        text-anchor="middle"
         v-text="v.alt" />
       <x-chord
         v-if="v"
         fill="rgba(0,0,0,0.6)"
+        dy="0.34em"
         :x="width/2"
         :y="size/2"
         :font-size="18"
@@ -111,16 +116,27 @@ export default {
 </script>
 <style scoped>
 rect {
-  fill: rgba(0, 0, 0, 0.06);
   cursor: pointer;
+  stroke-width: 0.5;
 }
 
 rect.placeholder {
+  fill: rgba(0, 0, 0, 0.06);
   cursor: initial;
 }
 
+.slot {
+  fill-opacity: .5;
+  opacity: 0.48;
+}
+
+.slot:hover {
+  fill-opacity: .5;
+  opacity: 1;
+}
+
 text {
-  fill: rgba(0, 0, 0, 0.5);
+  fill: rgba(0, 0, 0, 0.6);
 }
 
 .active text {

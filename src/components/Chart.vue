@@ -312,10 +312,10 @@ export default {
       this.lastPlayed.push(node)
 
       if (!this.recent.includes(node)) {
-        this.recent.push(node)
+        this.recent.unshift(node)
 
         if (this.recent.length > 9) {
-          this.recent.shift()
+          this.recent.pop()
         }
       }
 
@@ -348,9 +348,7 @@ export default {
         ? d3.color(d3.interpolateCubehelix(d3.rgb(color), '#fff')(0.66)).darker(0.11)
         : d3.color(d3.interpolateCubehelix(d3.rgb(color), '#000')(0.33)).darker(0.33)
     },
-    radius ({ radius, y1, y0 }) {
-      const { nodeWidth } = this
-
+    radius ({ radius, y1, y0 }, nodeWidth = this.nodeWidth) {
       return Math.min((y1 - y0) / 2, nodeWidth / 2, radius < 1 ? radius * nodeWidth : radius)
     },
     draw () {
