@@ -111,7 +111,7 @@
     <v-list-item class="py-5">
       <v-slider
         v-model="volume"
-        :label="!midiOutput ? velocityToVolume(volume).toString() : volume.toString()"
+        :label="!midiOutput ? `${formatNumber(velocityToVolume(volume))} dB` : volume.toString()"
         inverse-label
         prepend-icon="mdi-volume-high"
         :dark="dark"
@@ -320,11 +320,12 @@
 import Settable from './Settable'
 import { midiStatus, initMidi } from '../utils/midi'
 import { velocityToVolume } from '@/utils/play'
+import { formatNumber } from '@/utils/format'
 
 export default {
   mixins: [Settable],
   data: () => ({ midiStatus }),
-  methods: { initMidi, velocityToVolume }
+  methods: { initMidi, velocityToVolume, formatNumber }
 }
 </script>
 <style scoped>
