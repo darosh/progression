@@ -29,7 +29,7 @@ async function initialize () {
 
   for (const property in samples) {
     if (samples.hasOwnProperty(property)) {
-      samples[property].release = 1
+      samples[property].release = 0.5
       samples[property].toDestination()
     }
   }
