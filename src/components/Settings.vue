@@ -314,6 +314,14 @@
       </v-row>
     </v-list-item>
     <v-divider />
+    <p class="ma-0 pa-5">
+    Begin with blue box.
+    Follow to the right.
+    Jump to green one at any time and follow to the right.
+    Use +3/-3 chord inversion buttons or W/S hot keys.
+    See and replay recent chords on the right (hot keys 1-9).
+    </p>
+    <v-divider />
   </v-list>
 </template>
 <script>
