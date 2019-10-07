@@ -103,5 +103,6 @@ function transpose (note, octave) {
 }
 
 export function velocityToVolume (volume) {
-  return Math.round(Math.log10((volume / 127) * 10) * 32 - 32) || 0
+  // Based on MMA GM MIDI specification https://www.kvraudio.com/forum/viewtopic.php?t=310725
+  return Math.round(40 * Math.log10(volume / 127)) || 0
 }

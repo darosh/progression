@@ -117,7 +117,7 @@
         :dark="dark"
         thumb-color="grey darken-1"
         hide-details
-        min="1"
+        min="0"
         max="127"
         light
         color="grey darken-1"
