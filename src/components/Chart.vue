@@ -88,14 +88,14 @@
           marker-start="url(#start-marker)"
           marker-end="url(#end-marker)"
           :d="path(link)"
-          :style="{stroke: stroke(link.source.color)}" />
+          :style="{stroke: stroke(link.source.extra.color)}" />
       </g>
       <g>
         <g
           v-for="(node, key) in graph.nodes"
           :key="key"
           class="node"
-          :class="{active: node.active, alias: lastEnterName === node.name}"
+          :class="{active: node.extra.active, alias: lastEnterName === node.data.name}"
           :transform="`translate(${[node.x0, node.y0]})`">
           <rect
             :data-cid="node.id"
@@ -103,7 +103,7 @@
             :width="nodeWidth"
             :rx="radius(node)"
             :ry="radius(node)"
-            :style="{fill: node.color, stroke: stroke(node.color)}"
+            :style="{fill: node.extra.color, stroke: stroke(node.extra.color)}"
             @mouseenter="onEnter(node)"
             @touchstart.stop="onTouchStart($event, {node})"
             @touchend.stop="onTouchEnd($event, {node})"
@@ -117,14 +117,14 @@
             :font-size="Math.max(altRadius, 14)"
             :parts="format(node)" />
           <g
-            v-for="(alt, index) in node.alts"
+            v-for="(alt, index) in node.extra.alts"
             :key="alt"
             class="alt"
-            :transform="`translate(${node.altsTranslate[index]})`">
+            :transform="`translate(${node.extra.altsTranslate[index]})`">
             <circle
               :r="altRadius"
               :data-aid="alt"
-              :style="{fill: altColor(node.color)}"
+              :style="{fill: altColor(node.extra.color)}"
               @mouseenter="onEnter(node)"
               @touchstart.stop="onTouchStart($event, {node, alt})"
               @touchend.stop="onTouchEnd($event, {node, alt})"
@@ -180,7 +180,7 @@ import { draw } from '@/utils/draw'
 export default {
   components: { XInversion, XRecent, XChord },
   props: {
-    graph: {
+    sanGraph: {
       type: Object,
       required: true
     },
@@ -198,7 +198,7 @@ export default {
     },
     format: {
       type: Function,
-      default: ({ name }) => [{ text: name }]
+      default: ({ data: { name } }) => [{ text: name }]
     },
     simpleFormat: {
       type: Function,
@@ -238,6 +238,7 @@ export default {
       nodeWidth: this.nodeSize,
       altRadius: 22,
       path: null,
+      graph: null,
       lastNode: null,
       inversionPad: 48,
       rippleColor: null,
@@ -252,12 +253,12 @@ export default {
   },
   computed: {
     lastEnterName () {
-      return this.lastEnter && this.lastEnter.name
+      return this.lastEnter && this.lastEnter.data.name
     },
     graphValues () {
-      const { graph, nodeSize, width, height, pads, margin } = this
+      const { sanGraph, nodeSize, width, height, pads, margin } = this
 
-      return graph, nodeSize, width, height, pads, margin, Date.now() // eslint-disable-line no-sequences
+      return sanGraph, nodeSize, width, height, pads, margin, Date.now() // eslint-disable-line no-sequences
     }
   },
   watch: {
@@ -308,7 +309,7 @@ export default {
       if (!recent) {
         node.inversion = this.inversion
         this.ripple(event, 1, node.node, mouse)
-      } else {
+      } else if (this.graph.nodes.includes(node.node)) {
         this.ripple(this.nodeCenter(node), 1, node.node, mouse)
       }
 
@@ -355,18 +356,19 @@ export default {
         ? d3.color(d3.interpolateCubehelix(d3.rgb(color), '#fff')(0.66)).darker(0.11)
         : d3.color(d3.interpolateCubehelix(d3.rgb(color), '#000')(0.33)).darker(0.33)
     },
-    radius ({ radius, y1, y0 }, nodeWidth = this.nodeWidth) {
+    radius ({ extra: { radius }, y1, y0 }, nodeWidth = this.nodeWidth) {
       return Math.min((y1 - y0) / 2, nodeWidth / 2, radius < 1 ? radius * nodeWidth : radius)
     },
     draw () {
-      if (!this.graph) {
+      if (!this.sanGraph) {
         return
       }
 
-      const { altRadius, path, nodeSize } = draw(this)
+      const { altRadius, path, nodeSize, graph } = draw(this)
       this.altRadius = altRadius
       this.path = path
       this.nodeWidth = nodeSize
+      this.graph = graph
     },
     async ripple (event, timing, node, mouse) {
       let x
@@ -381,7 +383,7 @@ export default {
         y = event.offsetY
       }
 
-      this.rippleColor = this.$vuetify.theme.dark ? d3.rgb(node.color).brighter(1.5) : d3.rgb(node.color).darker(1.25)
+      this.rippleColor = this.$vuetify.theme.dark ? d3.rgb(node.extra.color).brighter(1.5) : d3.rgb(node.extra.color).darker(1.25)
       this.lastNode = node
       await new Promise(resolve => this.$nextTick(resolve))
       const { ripple } = this.$refs
@@ -399,7 +401,7 @@ export default {
     },
     nodeCenter (node) {
       if (node.alt) {
-        const t = node.node.altsTranslate[node.node.alts.indexOf(node.alt)]
+        const t = node.node.extra.altsTranslate[node.node.extra.alts.indexOf(node.alt)]
 
         return { offsetX: node.node.x0 + t[0], offsetY: node.node.y0 + t[1] }
       }
@@ -515,6 +517,7 @@ export default {
 
 .node.alias:not(.active) rect {
   stroke: #000 !important;
+  /*noinspection CssInvalidPropertyValue*/
   stroke-dasharray: 1 6;
   stroke-width: 2;
   stroke-linejoin: round;
@@ -534,6 +537,7 @@ export default {
 
 .node.active rect {
   stroke: #000 !important;
+  /*noinspection CssInvalidPropertyValue*/
   stroke-dasharray: 8 5;
   stroke-width: 1.5;
   stroke-linejoin: round;
@@ -551,6 +555,7 @@ export default {
 
 path.link.active {
   stroke: #000 !important;
+  /*noinspection CssInvalidPropertyValue*/
   stroke-dasharray: 3 5;
   stroke-width: 1.5 !important;
   stroke-opacity: 1;

@@ -1,20 +1,12 @@
 import { sankey, sankeyRight, sankeyLinkHorizontal } from 'd3-sankey'
 import link from '../utils/link'
 
-export function draw ({ margin, graph, nodeSize, iterations, height, inversionPad, width, pads }) {
+export function draw ({ margin, sanGraph: graph, nodeSize, iterations, height, inversionPad, width, pads }) {
+  graph = { ...graph }
   const altRadius = Math.floor(nodeSize / 32) * 9
   const h = height - margin.bottom
   const nodePad = Math.floor(height / 240) * 6
   const w = width - margin.right - inversionPad * 1.5 - altRadius / 2
-
-  const san = sankey()
-    .nodeWidth(nodeSize)
-    .nodePadding(nodePad)
-    .iterations(iterations)
-    .nodeAlign(sankeyRight)
-    .extent([[margin.left + inversionPad, margin.top], [w, h]])
-
-  san(graph)
 
   let path
 
@@ -23,6 +15,14 @@ export function draw ({ margin, graph, nodeSize, iterations, height, inversionPa
     nodeSize = nodeWidth
     path = link()
   } else {
+    const san = sankey()
+      .nodeWidth(nodeSize)
+      .nodePadding(nodePad)
+      .iterations(iterations)
+      .nodeAlign(sankeyRight)
+      .extent([[margin.left + inversionPad, margin.top], [w, h]])
+
+    san(graph)
     path = sankeyLinkHorizontal()
   }
 
@@ -34,15 +34,15 @@ export function draw ({ margin, graph, nodeSize, iterations, height, inversionPa
 function adjustAlts ({ altRadius, graph, nodeSize }) {
   for (const node of graph.nodes) {
     const height = node.y1 - node.y0
-    const vertical = (node.y1 - node.y0) > (node.alts.length * altRadius * 2 - altRadius)
+    const vertical = (node.y1 - node.y0) > (node.extra.alts.length * altRadius * 2 - altRadius)
 
     if (vertical) {
-      node.altsTranslate = node.alts.map((alt, index) => [
+      node.extra.altsTranslate = node.extra.alts.map((alt, index) => [
         nodeSize,
-        height - index * (((height) > (node.alts.length * altRadius * 2 - altRadius)) ? altRadius * 2 : (height + altRadius) / node.alts.length)
+        height - index * (((height) > (node.extra.alts.length * altRadius * 2 - altRadius)) ? altRadius * 2 : (height + altRadius) / node.extra.alts.length)
       ])
     } else {
-      node.altsTranslate = node.alts.map((alt, index) => [
+      node.extra.altsTranslate = node.extra.alts.map((alt, index) => [
         index * altRadius * 2,
         height
       ])
@@ -53,7 +53,8 @@ function adjustAlts ({ altRadius, graph, nodeSize }) {
 function toPads ({ nodes, links }, width, height, { left, right, top, bottom }, inversionPad, nodeWidth) {
   const nw = nodeWidth = 2 * nodeWidth
 
-  nodes = nodes.slice().sort((a, b) => (a.romanChord.step + a.romanChord.chordType).localeCompare(b.romanChord.step + b.romanChord.chordType))
+  nodes = nodes.slice().sort((a, b) => (a.extra.romanChord.step + a.extra.romanChord.chordType)
+    .localeCompare(b.extra.romanChord.step + b.extra.romanChord.chordType))
 
   width -= inversionPad
 

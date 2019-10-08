@@ -10,6 +10,7 @@ module.exports = {
   transform: {
     '^.+\\.vue$': 'vue-jest',
     '.+\\.(css|styl|less|sass|scss|svg|png|jpg|ttf|woff|woff2)$': 'jest-transform-stub',
+    '^.+\\.jsx?$': 'ts-jest',
     '^.+\\.tsx?$': 'ts-jest'
   },
   transformIgnorePatterns: [
@@ -31,7 +32,8 @@ module.exports = {
   ],
   globals: {
     'ts-jest': {
-      babelConfig: true
+      babelConfig: true,
+      packageJson: 'package.json'
     }
   }
 }

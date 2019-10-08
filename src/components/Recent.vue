@@ -23,7 +23,7 @@
         class="slot"
         :rx="$parent.radius(v.node, width > size ? size / 2 : width)"
         :ry="$parent.radius(v.node, width > size ? size / 2 : width)"
-        :style="{fill: v.node.color, stroke: $parent.stroke(v.node.color)}"
+        :style="{fill: v.node.extra.color, stroke: $parent.stroke(v.node.extra.color)}"
         @mouseenter="$parent.onEnter(v.node)"
         @touchstart.stop="$parent.onTouchStart($event, v, true)"
         @touchend.stop="$parent.onTouchEnd($event, v)"

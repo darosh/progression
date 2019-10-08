@@ -34,7 +34,7 @@ const data = {
   inversion: 0,
 
   // Chart
-  formatRoman: null,
+  formatRoman: true,
   layoutPads: null,
   chartBass: true,
   chartSimple: null,

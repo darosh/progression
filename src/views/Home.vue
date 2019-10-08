@@ -1,8 +1,8 @@
 <template>
   <v-app ref="full">
     <v-navigation-drawer
-      :mobile-break-point="mbp"
       v-model="showMenu"
+      :mobile-break-point="mbp"
       :temporary="isFull"
       hide-overlay
       app
@@ -72,15 +72,13 @@
             elevation="1">
             <div style="overflow-x: auto;">
               <x-chart
-                v-if="!!graph"
                 ref="chart"
+                v-bind="graphProps"
                 :style="{visibility: hide ? 'hidden' : null}"
-                :graph="graph"
                 :margin="margin"
                 :animate="visible"
                 class="d-block"
                 :width="width"
-                :pads="layoutPads"
                 :height="height"
                 :inversions="inversions"
                 :inversion.sync="inversion"
@@ -142,11 +140,14 @@ import XSettings from '../components/Settings'
 import Settable from '../components/Settable'
 
 import { groups } from '../data/groups'
-import { removeSlashes, toSankey, toBeGrouped, mergeGroups, groupByNameAlt, normalize, activate } from '../utils/graph'
 import { formatRoman, transposeFormatTransposed } from '../utils/format'
 import { intervalsToMidi, intervalsToNotes, invert, parseChord } from '../utils/chord'
 import { initMidi, midiStatus, play as playMidi } from '../utils/midi'
 import { play, playStatus } from '../utils/play'
+import { initialize } from '@/utils/structure-chord'
+import { groupByNameAlt, joinAllNodes, mergeGroups, removeBass, toBeGrouped } from '@/utils/structure-chord-ops'
+import { filter, floodDepth, toList } from '@/utils/structure'
+import { activate, mapExtra, toSankey } from '@/utils/structure-extra'
 
 const mbp = 1640
 
@@ -159,12 +160,12 @@ export default {
     visible: true,
     hide: false,
     midi: null,
-    graph: null,
     piano: [],
     playStatus,
     midiStatus,
     isFull: false,
-    recentCount: 0
+    recentCount: 0,
+    graphProps: {}
   }),
   computed: {
     width () {
@@ -187,6 +188,7 @@ export default {
     },
     chartSimple: 'draw',
     chartBass: 'draw',
+    layoutPads: 'draw',
     dark (value) {
       this.$vuetify.theme.dark = value === true
     }
@@ -207,31 +209,39 @@ export default {
     },
     format () {
       if (this.formatRoman) {
-        return ({ name }) => formatRoman(name)
+        return ({ data: { name } }) => formatRoman(name)
       } else {
-        return ({ name }) => transposeFormatTransposed(name, this.rootNote)
+        return ({ data: { name } }) => transposeFormatTransposed(name, this.rootNote)
       }
     },
     draw () {
-      const list = normalize(this.progressionType, groups, false)
+      const dic = initialize(this.progressionType.map)
+
+      if (this.progressionType.joints) {
+        joinAllNodes(dic, this.progressionType.joints)
+      }
 
       if (!this.chartBass) {
-        removeSlashes(list)
+        removeBass(dic)
       }
 
-      const grouped = groupByNameAlt(list)
-      const bgr = toBeGrouped(grouped, this.progressionType)
-      mergeGroups(bgr, list)
+      const mergingCandidates = groupByNameAlt(toList(dic))
+      const mergingGroups = this.layoutPads ? mergingCandidates : toBeGrouped(mergingCandidates)
+      floodDepth(dic)
+      mergeGroups(dic, mergingGroups)
 
       if (this.chartSimple) {
-        list.filter(({ group }) => group > 1).forEach(obj => { obj.removed = true })
+        filter(dic, ({ data: { group } }) => group <= 1)
       }
 
-      this.graph = toSankey(list)
-      this.graph.nodes.forEach(object => { object.romanChord = romanNumeral(object.name) })
+      mapExtra(dic, groups)
+
+      const list = toList(dic)
+      list.forEach(object => { object.extra.romanChord = romanNumeral(object.data.name) })
+      this.graphProps = { sanGraph: toSankey(list), pads: this.layoutPads }
     },
     async play ({ node, alt, inversion }, release = false) {
-      const romanChord = alt ? { ...node.romanChord, chordType: alt } : node.romanChord
+      const romanChord = alt ? { ...node.extra.romanChord, chordType: alt } : node.extra.romanChord
       const intervals = invert(parseChord(romanChord, this.rootNote, this.rootOctave), inversion)
       const notes = intervalsToNotes(intervals)
       let midi
