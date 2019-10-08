@@ -581,6 +581,6 @@ path.link.active {
 }
 
 .pads .link:not(.active) {
-  opacity: 0.12 !important;
+  opacity: 0.16 !important;
 }
 </style>
