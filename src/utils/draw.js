@@ -77,6 +77,14 @@ function toPads ({ nodes, links }, width, height, { left, right, top, bottom }, 
     node.y1 = (y + 1) * h
 
     i++
+
+    node.sourceLinks = []
+    node.targetLinks = []
+  }
+
+  for (const link of links) {
+    link.source.sourceLinks.push(link)
+    link.target.targetLinks.push(link)
   }
 
   return { nodeWidth }
