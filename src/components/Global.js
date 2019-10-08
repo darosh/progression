@@ -1,6 +1,8 @@
 import Vue from 'vue'
-import { major, minor } from '../data' // , circular
+import frozen from '../data/frozen'
 import { formatNumber } from '../utils/format'
+
+const { major, minor } = frozen
 
 const defaultChannels = Object.freeze([
   {
