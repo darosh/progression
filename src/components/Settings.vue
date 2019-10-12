@@ -1,12 +1,13 @@
 <template>
   <v-list class="py-0">
-    <v-list-item class="py-5">
+    <v-list-item class="py-3">
       <v-row
-        justify="space-around"
+        justify="space-between"
+        align="center"
         no-gutters>
         <v-btn-toggle
           v-model="progressionType"
-          mandatory
+          class="ma-3"
           rounded>
           <v-btn
             v-for="({name, value}, index) in progressionTypes"
@@ -15,62 +16,80 @@
             :value="value"
             v-text="name" />
         </v-btn-toggle>
+        <v-menu
+          left>
+          <template v-slot:activator="{ on }">
+            <v-btn
+              class="ma-3"
+              text
+              v-on="on">
+              More
+            </v-btn>
+          </template>
+          <v-card>
+            <v-list>
+              <v-list-item
+                v-for="({name, value}, index) in progressionTypesMore"
+                :key="index"
+                @click="progressionType = value">
+                <v-list-item-title v-text="name" />
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-menu>
       </v-row>
     </v-list-item>
     <v-divider />
     <v-list-item class="py-5 px-0">
       <v-flex />
-      <v-btn-toggle
-        v-model="rootPitch"
-        rounded
-        mandatory>
+      <div style="position: relative;height: 200px; width: 200px;">
+        <v-row
+          align="center"
+          no-gutters
+          style="position: absolute; top: 82px; width: 100%; display: flex;"
+          class="text-center">
+          <v-flex />
+          <v-btn
+            icon
+            style="font-size: 16px;"
+            @click="rootOctave = octaves[(octaves.indexOf(rootOctave) - 1 + octaves.length) % octaves.length]">
+            &minus;
+          </v-btn>
+          <span
+            style="min-width: 24px; font-size: 16px; display: inline-block; text-align: center;"
+            v-text="rootOctave" />
+          <v-btn
+            icon
+            style="font-size: 16px;"
+            @click="rootOctave = octaves[(octaves.indexOf(rootOctave) + 1) % octaves.length]">
+            +
+          </v-btn>
+          <v-flex />
+        </v-row>
         <v-btn
-          v-for="key in pitches"
-          :key="key"
-          :value="key"
-          text
-          v-text="key" />
-      </v-btn-toggle>
+          v-for="(v, i) in pitches"
+          :key="i"
+          style="position: absolute; font-size: 16px;"
+          :class="rootPitch === v ? 'grey darken-1' : null"
+          :dark="rootPitch === v"
+          :style="{
+            left: `${100 -36/2 + 78 * Math.sin(i / pitches.length * 2 * Math.PI)}px`,
+            top: `${100 -36/2 + 78 * -Math.cos(i / pitches.length * 2 * Math.PI)}px`
+          }"
+          icon
+          @click="rootPitch = v"
+          v-text="`${v[0]}${v[1] ? accidentals[1].name : ''}`" />
+      </div>
       <v-flex />
     </v-list-item>
-    <v-list-item class="pb-5">
-      <v-row
-        justify="space-between"
-        no-gutters>
-        <v-btn-toggle
-          v-model="rootOctave"
-          rounded
-          mandatory>
-          <v-btn
-            v-for="key in octaves"
-            :key="key"
-            text
-            :value="key"
-            v-text="key " />
-        </v-btn-toggle>
-        <v-btn-toggle
-          v-model="rootAccidental"
-          mandatory
-          rounded>
-          <v-btn
-            v-for="({name, value}, key) in accidentals"
-            :key="key"
-            text
-            :value="value">
-            <span
-              class="sign"
-              v-text="name" />
-          </v-btn>
-        </v-btn-toggle>
-      </v-row>
-    </v-list-item>
     <v-divider />
-    <v-list-item class="py-5">
+    <v-list-item class="py-3">
       <v-row
         justify="space-between"
         no-gutters>
         <v-btn-toggle
           v-model="layoutPads"
+          class="my-3"
           rounded>
           <v-btn
             text
@@ -80,6 +99,7 @@
         </v-btn-toggle>
         <v-btn-toggle
           v-model="formatRoman"
+          class="my-3"
           rounded>
           <v-btn
             text
@@ -89,6 +109,7 @@
         </v-btn-toggle>
         <v-btn-toggle
           v-model="chartBass"
+          class="my-3"
           rounded>
           <v-btn
             text
@@ -98,6 +119,7 @@
         </v-btn-toggle>
         <v-btn-toggle
           v-model="chartSimple"
+          class="my-3"
           rounded>
           <v-btn
             text
@@ -125,7 +147,7 @@
     </v-list-item>
     <v-divider />
     <v-list-item
-      class="py-5">
+      class="py-3">
       <v-row
         justify="space-between"
         align="center"
@@ -137,6 +159,7 @@
           right>
           <template v-slot:activator="{ on }">
             <v-btn
+              class="my-3"
               text
               v-on="on">
               Channels
@@ -252,6 +275,7 @@
           left>
           <template v-slot:activator="{ on }">
             <v-btn
+              class="my-3"
               text
               v-on="on"
               @click="initMidi">
@@ -304,6 +328,7 @@
         </v-menu>
         <v-btn-toggle
           v-model="dark"
+          class="my-3"
           rounded>
           <v-btn
             text

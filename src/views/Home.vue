@@ -6,7 +6,7 @@
       :temporary="isFull"
       hide-overlay
       app
-      width="368"
+      :width="$vuetify.breakpoint.width > 1200 ? 368 : 240"
       :color="$vuetify.theme.dark ? 'grey darken-4' : 'grey lighten-4'">
       <x-settings />
       <v-row
@@ -23,9 +23,9 @@
     <v-content>
       <v-container
         fluid
-        :class="{'pa-5': !isFull, 'pa-0 black': isFull}">
+        :class="{'pa-5': (!isFull && $vuetify.breakpoint.width > 800), 'pa-0 black': !(!isFull && $vuetify.breakpoint.width > 800)}">
         <v-row
-          v-if="!isFull"
+          v-if="!isFull && $vuetify.breakpoint.width > 800"
           class="pb-5"
           no-gutters
           align="center">
@@ -68,7 +68,7 @@
           justify="center">
           <v-card
             :color="$vuetify.theme.dark ? 'grey darken-4' : null"
-            :style="{borderRadius: '24px'}"
+            :style="{borderRadius: (!isFull && $vuetify.breakpoint.width > 800) ? '24px' : 0}"
             elevation="1">
             <div style="overflow-x: auto;">
               <x-chart
@@ -102,7 +102,7 @@
               </v-btn>
             </div>
             <div
-              v-if="isFull"
+              v-if="isFull || ($vuetify.breakpoint.width <= 800)"
               style="position: absolute; top: 0; left: 0;"
               class="pa-2">
               <v-btn

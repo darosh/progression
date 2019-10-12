@@ -1,5 +1,6 @@
 import { romanNumeral } from '@tonaljs/roman-numeral'
 import { transpose } from '@tonaljs/chord'
+import { simplify } from '@tonaljs/note'
 import { coordToInterval, encode, transpose as transposeNote } from '@tonaljs/tonal'
 import { getBassInterval, parseBass } from './chord'
 
@@ -78,7 +79,7 @@ export function transposeFormatTransposed (name, baseNote) {
   const r = romanNumeral(name)
   const n = transpose(baseNote, coordToInterval(encode(r)).name)
 
-  return formatTransposed(n, r.chordType, baseNote)
+  return formatTransposed(simplify(n), r.chordType, baseNote)
 }
 
 export function formatNumber (value) {

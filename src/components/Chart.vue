@@ -5,7 +5,6 @@
     :height="height"
     :class="{dark: dark, highlight: highlight, pause: !animate, pads: pads}"
     @touchstart.stop="onGlobalTouch"
-    @touchend.stop="onGlobalTouch"
     @mousedown.stop="highlight = false"
     @mouseup.stop="onMouseUp($event, null)">
     <defs>
@@ -283,8 +282,8 @@ export default {
         this.$emit('enter', node)
       }
     },
-    onGlobalTouch (event) {
-      if (event.cancelable) {
+    onGlobalTouch (event, cancel = false) {
+      if (cancel && event.cancelable) {
         event.preventDefault()
       }
 
