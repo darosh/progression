@@ -51,16 +51,16 @@
           <v-flex />
           <v-btn
             icon
-            style="font-size: 16px;"
+            style="font-size: 15px;"
             @click="rootOctave = octaves[(octaves.indexOf(rootOctave) - 1 + octaves.length) % octaves.length]">
             &minus;
           </v-btn>
           <span
-            style="min-width: 24px; font-size: 16px; display: inline-block; text-align: center;"
+            style="min-width: 24px; font-size: 15px; display: inline-block; text-align: center;"
             v-text="rootOctave" />
           <v-btn
             icon
-            style="font-size: 16px;"
+            style="font-size: 15px;"
             @click="rootOctave = octaves[(octaves.indexOf(rootOctave) + 1) % octaves.length]">
             +
           </v-btn>
@@ -69,7 +69,7 @@
         <v-btn
           v-for="(v, i) in pitches"
           :key="i"
-          style="position: absolute; font-size: 16px;"
+          style="position: absolute; font-size: 15px;"
           :class="rootPitch === v ? 'grey darken-1' : null"
           :dark="rootPitch === v"
           :style="{
