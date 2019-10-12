@@ -51,8 +51,8 @@ const data = {
 
   // Constants
   defaultChannels,
-  octaves: Object.freeze([2, 3, 4, 5, 6]),
-  inversions: Object.freeze([-3, -2, -1, 0, 1, 2, 3].map(value => ({ value, text: formatNumber(value) }))),
+  octaves: Object.freeze([1, 2, 3, 4, 5, 6]),
+  inversions: Object.freeze([-3, -2, -1, 0, 1, 2, 3, 'A'].map(value => ({ value, text: formatNumber(value) }))),
   pitches: Object.freeze('C C# D D# E F F# G G# A A# B'.split(' ')),
   progressionTypes: Object.freeze([
     { name: 'Major', value: major },

@@ -75,12 +75,28 @@ export function getBassInterval (bass, acc) {
   return bassInterval
 }
 
+let lastMidis = null
+
 export function invert (intervals, inversion) {
+  const midis = intervals.map(toMidi)
+
   if (!inversion) {
+    lastMidis = midis
     return intervals
   }
 
-  const midis = intervals.map(toMidi)
+  if ((inversion === 'A') && lastMidis) {
+    automatic(midis, lastMidis)
+  } else {
+    invertMidi(midis, inversion)
+  }
+
+  lastMidis = midis
+
+  return midis.map(midiToNoteName)
+}
+
+function invertMidi (midis, inversion) {
   const sign = Math.sign(inversion)
 
   while (inversion !== 0) {
@@ -99,5 +115,17 @@ export function invert (intervals, inversion) {
     }
   }
 
-  return midis.map(midiToNoteName)
+  return midis
+}
+
+function automatic (midis, lastMidis) {
+  const lastMax = Math.max(...lastMidis)
+  const currentMax = Math.max(...midis)
+  const dist = lastMax - currentMax
+
+  if (dist === 0) {
+    return
+  }
+
+  invertMidi(midis, Math.sign(dist))
 }

@@ -228,7 +228,7 @@ export default {
       required: true
     },
     inversion: {
-      type: Number,
+      type: [Number, String],
       required: true
     }
   },

@@ -83,5 +83,5 @@ export function transposeFormatTransposed (name, baseNote) {
 }
 
 export function formatNumber (value) {
-  return value === -Infinity ? '−∞' : value < 0 ? '−' + Math.abs(value) : value > 0 ? '+' + value : 0
+  return value === -Infinity ? '−∞' : value < 0 ? '−' + Math.abs(value) : value > 0 ? '+' + value : value
 }
