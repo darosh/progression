@@ -78,7 +78,6 @@ export function getBassInterval (bass, acc) {
 let lastMidis = null
 
 export function invert (intervals, inversion) {
-  debugger
   const midis = intervals.map(toMidi)
 
   if (!inversion) {
