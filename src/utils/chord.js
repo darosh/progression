@@ -15,14 +15,7 @@ export function parseChord (romanChord, note, octave) {
 
   if (bass) {
     const bassInterval = getBassInterval(bass, acc)
-    const bassIntervalData = interval(bassInterval)
-    const firstIntervalData = interval(chordIntervals[0])
-
-    const adjustedBassInterval = (bassIntervalData.semitones >= firstIntervalData.semitones)
-      ? substract(bassInterval, '8P')
-      : bassInterval
-
-    chordIntervals.unshift(adjustedBassInterval)
+    invertToBass(chordIntervals, bassInterval)
   }
 
   const trans = interval => transposeNote(`${note}${octave}`, interval)
@@ -36,6 +29,35 @@ export function intervalsToNotes (intervals) {
 
 export function intervalsToMidi (intervals) {
   return intervals.map(n => note(n).midi)
+}
+
+export function invertToBass (intervals, bassInterval) {
+  if (intervals.includes(bassInterval)) {
+    return reorderToInversion(intervals, bassInterval)
+  }
+
+  const bassIntervalOctave = add(bassInterval, '8P')
+
+  if (intervals.includes(bassIntervalOctave)) {
+    reorderToInversion(intervals, bassIntervalOctave)
+  } else {
+    const bassIntervalData = interval(bassInterval)
+    const firstIntervalData = interval(intervals[0])
+
+    const adjustedBassInterval = (bassIntervalData.semitones >= firstIntervalData.semitones)
+      ? substract(bassInterval, '8P')
+      : bassInterval
+
+    intervals.unshift(adjustedBassInterval)
+  }
+}
+
+export function reorderToInversion (intervals, bassInterval) {
+  while (intervals[0] !== bassInterval) {
+    let item = intervals.shift()
+    item = add(item, '8P')
+    intervals.push(item)
+  }
 }
 
 export function parseBass (chordType) {
