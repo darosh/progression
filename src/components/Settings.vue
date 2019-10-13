@@ -8,6 +8,7 @@
         <v-btn-toggle
           v-model="progressionType"
           class="ma-3"
+          :mandatory="progressionTypes.some(({ value }) => value === progressionType)"
           rounded>
           <v-btn
             v-for="({name, value}, index) in progressionTypes"
