@@ -373,13 +373,14 @@ export default {
       let x
       let y
 
+      const { left, top } = this.$refs.chart.getBoundingClientRect()
+
       if (event.touches) {
-        const { left, top } = this.$refs.chart.getBoundingClientRect()
         x = event.touches[0].clientX - left
         y = event.touches[0].clientY - top
       } else {
-        x = event.offsetX
-        y = event.offsetY
+        x = event.clientX - left
+        y = event.clientY - top
       }
 
       this.rippleColor = this.$vuetify.theme.dark ? d3.rgb(node.extra.color).brighter(1.5) : d3.rgb(node.extra.color).darker(1.25)
