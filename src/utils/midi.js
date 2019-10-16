@@ -98,25 +98,38 @@ function mixChannels (notes, channels) {
 }
 
 export function getChannelNotesVolumes (notes, channels) {
-  return channels.reduce((acc, { bass, mid, voice, octave, channel, velocity }) => {
+  return channels.reduce((acc, { bass, mid, voice, octave, channel, velocity, pick }) => {
     const t = n => n + octave * 12
+    const arr = []
 
     if (bass) {
-      acc.push({ note: t(notes[0]), channel, velocity })
-    }
-
-    if (voice) {
-      acc.push({ note: t(notes[notes.length - 1]), channel, velocity })
+      arr.push({ note: t(notes[0]), channel, velocity })
     }
 
     if (mid) {
       for (let i = 1; i < (notes.length - 1); i++) {
-        acc.push({ note: t(notes[i]), channel, velocity })
+        arr.push({ note: t(notes[i]), channel, velocity })
       }
     }
 
+    if (voice) {
+      arr.push({ note: t(notes[notes.length - 1]), channel, velocity })
+    }
+
+    acc.push(...pickNotes(arr, pick))
+
     return acc
   }, [])
+}
+
+function pickNotes (arr, pick) {
+  if (pick === 0) {
+    return arr
+  } else if (pick < 0) {
+    return arr.slice(0, Math.min(Math.abs(pick), arr.length))
+  } else {
+    return arr.slice(arr.length - Math.min(pick, arr.length))
+  }
 }
 
 function groupByChannel (array) {

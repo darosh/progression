@@ -154,8 +154,8 @@
         align="center"
         no-gutters>
         <v-menu
-          min-width="300"
-          max-width="520"
+          min-width="580"
+          max-width="620"
           :close-on-content-click="false"
           right>
           <template v-slot:activator="{ on }">
@@ -189,6 +189,9 @@
                     </th>
                     <th class="text-left">
                       Velocity
+                    </th>
+                    <th class="text-left">
+                      Pick
                     </th>
                     <th class="text-left" />
                   </tr>
@@ -246,6 +249,16 @@
                         @keydown.stop="" />
                     </td>
                     <td>
+                      <v-text-field
+                        v-model="v.pick"
+                        min="-8"
+                        max="9"
+                        class="mt-0"
+                        hide-details
+                        type="number"
+                        @keydown.stop="" />
+                    </td>
+                    <td>
                       <v-btn
                         v-if="channels.length > 1"
                         color="accent"
@@ -257,7 +270,7 @@
                     </td>
                   </tr>
                   <tr>
-                    <td colspan="6" />
+                    <td colspan="7" />
                     <td>
                       <v-btn
                         color="accent"
