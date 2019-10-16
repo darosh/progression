@@ -19,7 +19,7 @@ const defaultChannels = Object.freeze([
     voice: false,
     octave: -1,
     channel: 2,
-    velocity: 64
+    velocity: 32
   }
 ])
 
@@ -28,7 +28,7 @@ const data = {
   progressionType: major,
 
   // Root
-  rootOctave: 3,
+  rootOctave: 4,
   rootPitch: 'C',
   rootAccidental: null,
 

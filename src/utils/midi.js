@@ -12,6 +12,17 @@ export const midiStatus = {
 
 const { register, unregister, stopping, releasing } = bindMethods(new Register())
 
+export function getMidiPlay (midiOutput) {
+  return {
+    start (notes, channel, velocity) {
+      midiOutput.playNote(notes, channel, { velocity, rawVelocity: true })
+    },
+    stop (releasedNotes, channel) {
+      midiOutput.stopNote(releasedNotes, channel)
+    }
+  }
+}
+
 export function enable () {
   return new Promise((resolve, reject) => {
     WebMidi.enable(function (err) {
@@ -43,33 +54,33 @@ export async function initMidi () {
   }
 }
 
-export function play (midiOutput, notes, channels, release = false) {
+export function play ({ start, stop }, notes, channels, release = false) {
   const mix = mixChannels(notes, channels)
 
   mix.forEach(([channel, velocities]) => {
     velocities.forEach(([velocity, ns]) => {
       const n = ns.map(([note]) => note)
-      playChannel(midiOutput, n, channel, velocity, release)
+      playChannel({ start, stop }, n, channel, velocity, release)
     })
   })
 }
 
-function playChannel (midiOutput, notes, channel, velocity, release = false) {
+function playChannel ({ start, stop }, notes, channel, velocity, release = false) {
   if (release) {
     unregister(notes, channel)
     const releasedNotes = releasing(notes, channel)
 
     if (releasedNotes.length) {
-      midiOutput.stopNote(releasedNotes, channel)
+      stop(releasedNotes, channel)
     }
   } else {
     const toStop = stopping(notes, channel)
 
     if (toStop.length) {
-      midiOutput.stopNote(toStop, channel)
+      stop(toStop, channel)
     }
 
-    midiOutput.playNote(notes, channel, { velocity, rawVelocity: true })
+    start(notes, channel, velocity)
     register(notes, channel)
   }
 }
@@ -132,4 +143,8 @@ function filterLoudest (array) {
   const max = Math.max(...array.map(({ velocity }) => velocity))
 
   return array.find(({ velocity }) => velocity === max)
+}
+
+export function singleChannel (channels) {
+  return channels.map(c => ({ ...c, channel: 1 }))
 }

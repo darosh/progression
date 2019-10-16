@@ -131,22 +131,22 @@
       </v-row>
     </v-list-item>
     <v-divider />
-    <v-list-item class="py-5">
-      <v-slider
-        v-model="volume"
-        :label="!midiOutput ? `${formatNumber(velocityToVolume(volume))} dB` : volume.toString()"
-        inverse-label
-        prepend-icon="mdi-volume-high"
-        :dark="dark"
-        thumb-color="grey darken-1"
-        hide-details
-        min="0"
-        max="127"
-        light
-        color="grey darken-1"
-        track-color="rgba(156,156,156,.24)" />
-    </v-list-item>
-    <v-divider />
+    <!--    <v-list-item class="py-5">-->
+    <!--      <v-slider-->
+    <!--        v-model="volume"-->
+    <!--        :label="!midiOutput ? `${formatNumber(velocityToVolume(volume))} dB` : volume.toString()"-->
+    <!--        inverse-label-->
+    <!--        prepend-icon="mdi-volume-high"-->
+    <!--        :dark="dark"-->
+    <!--        thumb-color="grey darken-1"-->
+    <!--        hide-details-->
+    <!--        min="0"-->
+    <!--        max="127"-->
+    <!--        light-->
+    <!--        color="grey darken-1"-->
+    <!--        track-color="rgba(156,156,156,.24)" />-->
+    <!--    </v-list-item>-->
+    <!--    <v-divider />-->
     <v-list-item
       class="py-3">
       <v-row
@@ -222,7 +222,8 @@
                         max="8"
                         class="mt-0"
                         hide-details
-                        type="number" />
+                        type="number"
+                        @keydown.stop="" />
                     </td>
                     <td>
                       <v-text-field
@@ -231,7 +232,8 @@
                         max="16"
                         class="mt-0"
                         hide-details
-                        type="number" />
+                        type="number"
+                        @keydown.stop="" />
                     </td>
                     <td>
                       <v-text-field
@@ -240,7 +242,8 @@
                         max="127"
                         class="mt-0"
                         hide-details
-                        type="number" />
+                        type="number"
+                        @keydown.stop="" />
                     </td>
                     <td>
                       <v-btn
@@ -354,13 +357,16 @@
 <script>
 import Settable from './Settable'
 import { midiStatus, initMidi } from '../utils/midi'
-import { velocityToVolume } from '@/utils/play'
 import { formatNumber } from '@/utils/format'
 
 export default {
   mixins: [Settable],
   data: () => ({ midiStatus }),
-  methods: { initMidi, velocityToVolume, formatNumber }
+  methods: {
+    initMidi,
+    // velocityToVolume,
+    formatNumber
+  }
 }
 </script>
 <style scoped>

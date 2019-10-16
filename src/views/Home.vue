@@ -141,13 +141,14 @@ import Settable from '../components/Settable'
 
 import { groups } from '../data/groups'
 import { formatRoman, transposeFormatTransposed } from '../utils/format'
-import { intervalsToMidi, intervalsToNotes, invert, parseChord } from '../utils/chord'
-import { initMidi, midiStatus, play as playMidi } from '../utils/midi'
-import { play, playStatus } from '../utils/play'
+import { intervalsToMidi, invert, parseChord } from '../utils/chord'
+import { initMidi, midiStatus, getMidiPlay, play as playMidi } from '../utils/midi'
+import { playStatus, pianoPlay } from '../utils/piano'
 import { initialize } from '@/utils/structure-chord'
 import { groupByNameAlt, joinAllNodes, mergeGroups, removeBass, toBeGrouped } from '@/utils/structure-chord-ops'
 import { filter, floodDepth, toList } from '@/utils/structure'
 import { activate, mapExtra, toSankey } from '@/utils/structure-extra'
+import { singleChannel } from '@/utils/midi'
 
 const mbp = 1640
 
@@ -243,21 +244,16 @@ export default {
     async play ({ node, alt, inversion }, release = false) {
       const romanChord = alt ? { ...node.extra.romanChord, chordType: alt } : node.extra.romanChord
       const intervals = invert(parseChord(romanChord, this.rootNote, this.rootOctave), inversion)
-      const notes = intervalsToNotes(intervals)
-      let midi
-
-      if (!release || this.midiOutput) {
-        midi = intervalsToMidi(intervals)
-      }
+      const midi = intervalsToMidi(intervals)
 
       if (!release) {
         this.piano = midi
       }
 
       if (this.midiOutput) {
-        playMidi(this.midiOutput, midi, this.channels, release)
+        playMidi(getMidiPlay(this.midiOutput), midi, this.channels, release)
       } else {
-        play(notes, this.channels, release)
+        playMidi(pianoPlay, midi, singleChannel(this.channels), release)
       }
     },
     full () {
