@@ -19,8 +19,7 @@
         @touchend.stop="" />
       <text
         fill="rgba(0,0,0,0.6)"
-        dy="0.12em"
-        alignment-baseline="middle"
+        dominant-baseline="central"
         :x="width/2"
         :y="size/2"
         text-anchor="middle"

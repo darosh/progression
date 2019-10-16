@@ -130,7 +130,7 @@
               @mousedown.stop.prevent="onMouseDown($event, {node, alt})"
               @mouseup.stop.prevent="onMouseUp($event, {node, alt})" />
             <text
-              dy=".35em"
+              dominant-baseline="central"
               :font-size="alt.length > 3 ? Math.floor(altRadius * 0.7) - 2 : Math.floor(altRadius * 0.8)"
               text-anchor="middle">
               {{ simpleFormat(alt) }}

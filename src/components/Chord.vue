@@ -1,6 +1,6 @@
 <template>
   <text
-    dy=".35em"
+    dominant-baseline="central"
     text-anchor="middle">
     <tspan
       v-for="(part, keyName) in parts"
@@ -9,7 +9,7 @@
       :style="{
         fontWeight: part.primary ? '700' : '500'
       }"
-      :baseline-shift="part.secondary ? 6.3 : (part.pre ? -0.6 : (part.post ? 4 : null))"
+      :dy="keyName === 1 ? '-0.4em' : null"
       v-text="part.text" />
   </text>
 </template>
