@@ -1,15 +1,6 @@
 {
   "name": "progression",
   "version": "0.2.0",
-  "private": true,
-  "scripts": {
-    "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build --modern",
-    "lint": "vue-cli-service lint --fix",
-    "test:unit": "vue-cli-service test:unit",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d dist"
-  },
   "dependencies": {
     "@tonaljs/chord": "^3.2.3",
     "@tonaljs/chord-dictionary": "^3.2.3",
@@ -17,6 +8,7 @@
     "@tonaljs/note": "^3.2.4",
     "@tonaljs/pcset": "^3.2.3",
     "@tonaljs/roman-numeral": "^3.2.3",
+    "@tonaljs/scale-dictionary": "^3.2.3",
     "@tonaljs/tonal": "^3.2.2",
     "@tonejs/piano": "0.1.1",
     "bind-methods": "^1.1.0",
@@ -47,14 +39,25 @@
     "babel-jest": "^24.9.0",
     "eslint": "^6.5.1",
     "eslint-plugin-vue": "^5.2.3",
+    "fibers": "^4.0.1",
     "gh-pages": "^2.1.1",
+    "jest": "^24.9.0",
+    "node-sass": "^4.12.0",
     "sass": "^1.23.0",
     "sass-loader": "^8.0.0",
-    "jest": "^24.9.0",
     "ts-jest": "^24.1.0",
     "typescript": "^3.6.4",
     "vue-cli-plugin-vuetify": "^1.1.0",
     "vue-template-compiler": "^2.6.10",
     "vuetify-loader": "^1.3.0"
+  },
+  "private": true,
+  "scripts": {
+    "build": "vue-cli-service build --modern",
+    "deploy": "gh-pages -d dist",
+    "lint": "vue-cli-service lint --fix",
+    "predeploy": "npm run build",
+    "serve": "vue-cli-service serve",
+    "test:unit": "vue-cli-service test:unit"
   }
 }
