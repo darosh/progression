@@ -31,7 +31,7 @@ export function enable () {
       } else {
         resolve()
       }
-    }, true)
+    })
   })
 }
 
