@@ -42,5 +42,5 @@ function cdn (pkg, type) {
 }
 
 function velocity (string) {
-  return Object.values(string._urls)[0].matchAll(/v(\d+)/).next().value[1]
+  return Object.values(string._urls)[0].matchAll(/v(\d+)/g).next().value[1]
 }
